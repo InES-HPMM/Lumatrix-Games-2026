@@ -1,0 +1,185 @@
+:root {
+    --hg: #f4f5f7;
+    --karte: #ffffff;
+    --text: #1b1d23;
+    --leise: #626876;
+    --rand: #dfe2e8;
+    --akzent: #e8590c;
+    --akzent-text: #ffffff;
+    --ok: #2b8a3e;
+    --fehler: #c92a2a;
+    color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --hg: #14161c;
+        --karte: #1d2028;
+        --text: #e9ebf0;
+        --leise: #9aa1af;
+        --rand: #2f333d;
+        --akzent: #ff8a3d;
+        --akzent-text: #14161c;
+        --ok: #69db7c;
+        --fehler: #ff8787;
+        color-scheme: dark;
+    }
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: var(--hg);
+    color: var(--text);
+    font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+main {
+    max-width: 40rem;
+    margin: 0 auto;
+    padding: 2rem 1rem 3rem;
+}
+
+h1 {
+    margin: 0 0 0.25rem;
+    font-size: 1.6rem;
+}
+
+h2 {
+    margin: 0 0 0.75rem;
+    font-size: 1.05rem;
+}
+
+.unter {
+    margin: 0 0 1rem;
+    color: var(--leise);
+}
+
+section {
+    background: var(--karte);
+    border: 1px solid var(--rand);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    margin-top: 1rem;
+}
+
+dl {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 0.35rem 1rem;
+    margin: 0 0 1rem;
+}
+
+dt {
+    color: var(--leise);
+}
+
+dd {
+    margin: 0;
+}
+
+.zustand::before {
+    content: "";
+    display: inline-block;
+    width: 0.6rem;
+    height: 0.6rem;
+    border-radius: 50%;
+    margin-right: 0.4rem;
+    background: var(--leise);
+}
+
+.zustand[data-zustand="ok"]::before {
+    background: var(--ok);
+}
+
+button,
+input {
+    font: inherit;
+    color: inherit;
+}
+
+button {
+    border: 1px solid var(--rand);
+    background: var(--hg);
+    border-radius: 6px;
+    padding: 0.4rem 0.9rem;
+    cursor: pointer;
+}
+
+button.haupt {
+    background: var(--akzent);
+    border-color: var(--akzent);
+    color: var(--akzent-text);
+}
+
+button:disabled {
+    opacity: 0.45;
+    cursor: default;
+}
+
+input {
+    border: 1px solid var(--rand);
+    background: var(--hg);
+    border-radius: 6px;
+    padding: 0.35rem 0.6rem;
+}
+
+.knoepfe,
+.zeile {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+#suche-feld {
+    flex: 1 1 12rem;
+}
+
+.treffer {
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0 0.75rem;
+}
+
+.treffer button {
+    width: 100%;
+    text-align: left;
+    margin-bottom: 0.3rem;
+}
+
+.treffer .leer {
+    color: var(--leise);
+}
+
+.warnung {
+    border: 1px solid var(--fehler);
+    color: var(--fehler);
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+}
+
+.meldungen {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font: 0.85rem/1.4 ui-monospace, Menlo, Consolas, monospace;
+    max-height: 14rem;
+    overflow-y: auto;
+}
+
+.meldungen li {
+    padding: 0.15rem 0;
+    overflow-wrap: anywhere;
+}
+
+.meldungen .fehler {
+    color: var(--fehler);
+}
+
+.meldungen .geraet {
+    color: var(--leise);
+}

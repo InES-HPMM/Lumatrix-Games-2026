@@ -1,0 +1,28 @@
+ANGRY BITS - Angry-Birds-Klon fuer die Lumatrix
+================================================
+
+AUF DIE LUMATRIX LADEN
+  main.py und levels.py mit Thonny auf den Raspberry Pi Pico kopieren.
+  Nach einem Neustart laeuft das Spiel automatisch.
+
+STEUERUNG
+  Mitte              Intro ueberspringen, Level starten, schiessen
+  Oben / Unten       Winkel
+  Links / Rechts     Kraft, im Menue: Level waehlen
+  Mitte (im Flug)    Bombe zuenden (blauer Vogel)
+  Schiebeschalter    Pause, in der Pause Mitte = zurueck ins Menue
+  Papierkorb         im Menue ganz links: Spielstand loeschen
+
+INHALT
+  main.py                Das Spiel
+  levels.py              Die 8 Levels
+  Code-Spickzettel.pdf   Der Code, Funktion fuer Funktion erklaert
+  PC-Werkzeuge\          Hilfsprogramme, laufen nur am PC (Python 3):
+      sim.py             Simulator: Lumatrix im Fenster, Tastatur = Joystick
+      check_levels.py    Prueft, ob jedes Level schaffbar ist
+      editor.py          Level-Editor
+      pixel_editor.py    8x8-Grafiken zeichnen (grafiken.json)
+      upload_pico.py     Laedt das Spiel per USB auf den Pico
+
+Der Code wurde mit Claude (KI von Anthropic) geschrieben, Idee und
+Umsetzungsentscheide stammen von mir. Details im Code-Spickzettel.

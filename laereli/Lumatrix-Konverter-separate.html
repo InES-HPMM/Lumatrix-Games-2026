@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lumatrix-Konverter</title>
+<style>
+:root{--bg:#fff;--fg:#1d2330;--mut:#667085;--card:#f3f5f9;--acc:#2563eb;--bd:#d9dee8;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12151c;--fg:#e8ebf2;--mut:#98a2b3;--card:#1c212c;--acc:#5b8cff;--bd:#2c3342}}
+:root[data-theme="dark"]{--bg:#12151c;--fg:#e8ebf2;--mut:#98a2b3;--card:#1c212c;--acc:#5b8cff;--bd:#2c3342}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:720px;margin:0 auto;padding:20px 16px 40px}
+h1{font-size:1.4rem;margin:0 0 4px}
+p{margin:6px 0}.mut{color:var(--mut);font-size:.9rem}
+#drop{display:block;margin:16px 0 8px;padding:28px 16px;border:2px dashed var(--bd);border-radius:12px;text-align:center;cursor:pointer;background:var(--card)}
+#drop.over{border-color:var(--acc)}
+#drop input{display:none}
+.zeile{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:10px;margin:8px 0;background:var(--card);border-radius:10px}
+.zeile canvas{width:120px;height:24px;border-radius:4px;background:#000}
+.info{flex:1;min-width:140px;display:flex;flex-direction:column;overflow-wrap:anywhere}
+.info span{color:var(--mut);font-size:.85rem}
+input[type=number]{width:64px;padding:4px;border:1px solid var(--bd);border-radius:6px;background:var(--bg);color:var(--fg)}
+button{font:inherit;padding:8px 14px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--fg);cursor:pointer}
+#zip{background:var(--acc);border-color:var(--acc);color:#fff}
+button:disabled{opacity:.5;cursor:default}
+</style></head><body><main>
+<h1>Lumatrix-Konverter</h1>
+<p class="mut">MP3 → .lum-Datei für den Pico. Die Analyse läuft komplett in deinem Browser, nichts wird hochgeladen.</p>
+<label id="drop">MP3-Dateien hierher ziehen oder anklicken<input id="datei" type="file" accept="audio/*,.mp3" multiple></label>
+<p id="st" class="mut"></p>
+<div id="liste"></div>
+<p><button id="zip" disabled>ZIP herunterladen</button></p>
+<p class="mut" id="hinweis">Das ZIP enthält den Ordner <b>lieder</b> mit allen .lum-Dateien und die Datei <b>lieder_index.py</b>. BPM ist nur geschätzt und dient nur der Anzeige im Pico-Programm; du kannst den Wert ändern.</p>
+</main>
+<script>
+const FPS=25,BANDS=8,FLUXB=24,FMIN=40,FMAX=8000;
+const FARBEN=[[0,10,60],[60,0,5],[0,60,10],[45,0,45],[60,30,0]];
+const $=id=>document.getElementById(id);
+let songs=[];try{songs=JSON.parse(localStorage.getItem('lum_songs')||'[]')}catch(e){}
+const save=()=>{try{localStorage.setItem('lum_songs',JSON.stringify(songs))}catch(e){$('st').textContent='Hinweis: Liste konnte nicht im Browser gespeichert werden.'}};
+const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const toB64=u=>{let s='';for(let i=0;i<u.length;i+=8192)s+=String.fromCharCode.apply(null,u.subarray(i,i+8192));return btoa(s)};
+const fromB64=b=>Uint8Array.from(atob(b),c=>c.charCodeAt(0));
+
+// ---------- FFT (Radix-2) ----------
+function makeFFT(N){
+  const rev=new Uint32Array(N),cos=new Float64Array(N/2),sin=new Float64Array(N/2),bits=Math.log2(N);
+  for(let i=0;i<N;i++){let x=i,r=0;for(let b=0;b<bits;b++){r=(r<<1)|(x&1);x>>=1}rev[i]=r}
+  for(let i=0;i<N/2;i++){cos[i]=Math.cos(2*Math.PI*i/N);sin[i]=-Math.sin(2*Math.PI*i/N)}
+  return(re,im)=>{
+    for(let i=0;i<N;i++){const j=rev[i];if(j>i){let t=re[i];re[i]=re[j];re[j]=t;t=im[i];im[i]=im[j];im[j]=t}}
+    for(let size=2;size<=N;size<<=1){const half=size>>1,step=N/size;
+      for(let s=0;s<N;s+=size)for(let k=0;k<half;k++){
+        const wr=cos[k*step],wi=sin[k*step],a=s+k,b=a+half;
+        const tr=re[b]*wr-im[b]*wi,ti=re[b]*wi+im[b]*wr;
+        re[b]=re[a]-tr;im[b]=im[a]-ti;re[a]+=tr;im[a]+=ti}}
+  };
+}
+
+// ---------- BPM grob schätzen ----------
+function schaetzeBpm(o,n){
+  const at=t=>{const i=Math.floor(t);if(i+1>=n)return 0;const f=t-i;return o[i]*(1-f)+o[i+1]*f};
+  let best=120,bestS=-1;
+  for(let bpm=70;bpm<=180;bpm+=0.5){
+    const per=60/bpm*FPS;let m=0;
+    for(let p=0;p<8;p++){let s=0,c=0;for(let t=p/8*per;t<n-1;t+=per){s+=at(t);c++}if(c&&s/c>m)m=s/c}
+    const w=Math.exp(-0.5*Math.pow(Math.log2(bpm/120),2));
+    if(m*w>bestS){bestS=m*w;best=bpm}
+  }
+  return Math.round(best);
+}
+
+// ---------- Analyse: 25 Bilder/s mit 8 Frequenzbereichen + Beat-Stärke ----------
+async function analyse(file,rep){
+  const ctx=new(window.AudioContext||window.webkitAudioContext)();
+  let buf;try{buf=await ctx.decodeAudioData(await file.arrayBuffer())}finally{ctx.close()}
+  const sr=buf.sampleRate,len=buf.length,ch=buf.numberOfChannels,mono=new Float32Array(len);
+  for(let c=0;c<ch;c++){const d=buf.getChannelData(c);for(let i=0;i<len;i++)mono[i]+=d[i]/ch}
+  const N=sr>30000?4096:2048,binHz=sr/N,fft=makeFFT(N),n=Math.floor(len/sr*FPS)+1;
+  const hann=new Float32Array(N).map((_,i)=>0.5-0.5*Math.cos(2*Math.PI*i/N));
+  const rg=c=>Array.from({length:c},(_,i)=>{const a=Math.floor(FMIN*Math.pow(FMAX/FMIN,i/c)/binHz);const b=Math.ceil(FMIN*Math.pow(FMAX/FMIN,(i+1)/c)/binHz);return[a,Math.max(b,a+1)]});
+  const rE=rg(BANDS),rF=rg(FLUXB);
+  const re=new Float64Array(N),im=new Float64Array(N),mag=new Float64Array(N/2);
+  const eq=new Float32Array(n*BANDS),fl=new Float32Array(n*FLUXB);
+  const mean=(r,out,o)=>r.forEach(([a,b],j)=>{let s=0;for(let i=a;i<b;i++)s+=mag[i];out[o+j]=s/(b-a)});
+  for(let k=0;k<n;k++){
+    const s0=Math.round(k*sr/FPS)-N/2;
+    for(let i=0;i<N;i++){const j=s0+i;re[i]=(j>=0&&j<len?mono[j]:0)*hann[i];im[i]=0}
+    fft(re,im);
+    for(let i=0;i<N/2;i++)mag[i]=Math.hypot(re[i],im[i]);
+    mean(rE,eq,k*BANDS);mean(rF,fl,k*FLUXB);
+    if(k%150===0){rep(k/n);await new Promise(r=>setTimeout(r))}
+  }
+  // in dB umrechnen (80 dB Umfang), danach pro Bereich auf 0..255 skalieren
+  const db=a=>{let m=0;for(const v of a)if(v>m)m=v;m=m||1;return a.map(v=>20*Math.log10(Math.max(v,m*1e-4)/m))};
+  const E=db(eq),out=new Uint8Array(2+n*9);out[0]=FPS;out[1]=9;
+  for(let b=0;b<BANDS;b++){
+    const col=new Float32Array(n);for(let k=0;k<n;k++)col[k]=E[k*BANDS+b];
+    const srt=col.slice().sort(),lo=srt[Math.round(.1*(n-1))],hi=srt[Math.round(.98*(n-1))],sp=hi-lo;
+    for(let k=0;k<n;k++)out[2+k*9+b]=sp<1e-6?0:Math.round(Math.max(0,Math.min(1,(col[k]-lo)/sp))*255);
+  }
+  // Beat-Stärke: wie plötzlich werden die Bereiche lauter?
+  const F=db(fl),o=new Float32Array(n);
+  for(let k=1;k<n;k++){let s=0;for(let b=0;b<FLUXB;b++)s+=Math.max(0,F[k*FLUXB+b]-F[(k-1)*FLUXB+b]);o[k]=s/FLUXB}
+  const p99=Math.max(o.slice().sort()[Math.round(.99*(n-1))],1e-6);
+  for(let k=0;k<n;k++)out[2+k*9+8]=Math.round(Math.min(1,o[k]/p99)*255);
+  return{bytes:out,bpm:schaetzeBpm(o,n),dauer:Math.round(n/FPS)};
+}
+
+// ---------- ZIP (ohne Kompression) ----------
+const crcT=(()=>{const t=[];for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0}return t})();
+const crc32=u=>{let c=0xFFFFFFFF;for(let i=0;i<u.length;i++)c=crcT[(c^u[i])&255]^(c>>>8);return(c^0xFFFFFFFF)>>>0};
+function zip(files){
+  const enc=new TextEncoder(),parts=[],central=[];let off=0;
+  for(const f of files){
+    const nm=enc.encode(f.name),crc=crc32(f.data),sz=f.data.length;
+    const h=new DataView(new ArrayBuffer(30));
+    h.setUint32(0,0x04034b50,true);h.setUint16(4,20,true);h.setUint16(6,0x0800,true);h.setUint16(12,0x21,true);
+    h.setUint32(14,crc,true);h.setUint32(18,sz,true);h.setUint32(22,sz,true);h.setUint16(26,nm.length,true);
+    parts.push(new Uint8Array(h.buffer),nm,f.data);
+    const c=new DataView(new ArrayBuffer(46));
+    c.setUint32(0,0x02014b50,true);c.setUint16(4,20,true);c.setUint16(6,20,true);c.setUint16(8,0x0800,true);c.setUint16(14,0x21,true);
+    c.setUint32(16,crc,true);c.setUint32(20,sz,true);c.setUint32(24,sz,true);c.setUint16(28,nm.length,true);c.setUint32(42,off,true);
+    central.push(new Uint8Array(c.buffer),nm);
+    off+=30+nm.length+sz;
+  }
+  const cs=central.reduce((a,p)=>a+p.length,0),e=new DataView(new ArrayBuffer(22));
+  e.setUint32(0,0x06054b50,true);e.setUint16(8,files.length,true);e.setUint16(10,files.length,true);e.setUint32(12,cs,true);e.setUint32(16,off,true);
+  return new Blob([...parts,...central,new Uint8Array(e.buffer)],{type:'application/zip'});
+}
+const indexText=()=>"# automatisch erzeugt vom Lumatrix-Konverter: (Name, Datei, Farbe, BPM)\nLIEDER = [\n"+
+  songs.map((s,i)=>`    (${JSON.stringify(s.name)}, "/lieder/${s.file}", (${FARBEN[i%FARBEN.length].join(", ")}), ${s.bpm}),`).join("\n")+"\n]\n";
+
+// ---------- Anzeige ----------
+function zeichne(c,u){
+  const g=c.getContext('2d'),n=(u.length-2)/9;
+  for(let x=0;x<120;x++){const f=Math.min(n-1,Math.floor(x/120*n));
+    for(let b=0;b<8;b++){const v=u[2+f*9+b]/255;g.fillStyle=`hsl(${210-v*190},80%,${15+v*45}%)`;g.fillRect(x,21-b*3,1,3)}}
+}
+function render(){
+  $('liste').innerHTML=songs.map((s,i)=>`<div class="zeile"><canvas width="120" height="24" data-i="${i}"></canvas><div class="info"><b>${esc(s.name)}</b><span>${s.dauer} s · ${esc(s.file)}</span></div><label>BPM <input type="number" min="40" max="240" value="${s.bpm}" data-b="${i}"></label><button data-d="${i}" title="Entfernen">✕</button></div>`).join('')||'<p class="mut">Noch keine Lieder in der Datenbank.</p>';
+  document.querySelectorAll('canvas[data-i]').forEach(c=>zeichne(c,fromB64(songs[c.dataset.i].b64)));
+  $('zip').disabled=!songs.length;
+}
+async function verarbeite(files){
+  for(const f of files){
+    const name=f.name.replace(/\.[^.]+$/,'');
+    if(songs.some(s=>s.name===name)){$('st').textContent='Schon vorhanden: '+name;continue}
+    try{
+      const r=await analyse(f,p=>$('st').textContent=`Analysiere „${name}“ … ${Math.round(p*100)} %`);
+      const base=name.replace(/[^A-Za-z0-9_-]/g,'_');let file=base+'.lum',k=2;
+      while(songs.some(s=>s.file===file))file=base+'_'+(k++)+'.lum';
+      songs.push({name,file,bpm:r.bpm,dauer:r.dauer,b64:toB64(r.bytes)});
+      save();render();$('st').textContent='Fertig: '+name;
+    }catch(e){$('st').textContent='Fehler bei „'+name+'“: Datei konnte nicht gelesen werden.'}
+  }
+}
+$('datei').onchange=e=>{verarbeite([...e.target.files]);e.target.value=''};
+const dz=$('drop');
+dz.ondragover=e=>{e.preventDefault();dz.classList.add('over')};
+dz.ondragleave=()=>dz.classList.remove('over');
+dz.ondrop=e=>{e.preventDefault();dz.classList.remove('over');verarbeite([...e.dataTransfer.files])};
+$('liste').oninput=e=>{const i=e.target.dataset.b;if(i!=null){songs[i].bpm=Math.max(1,parseInt(e.target.value)||120);save()}};
+$('liste').onclick=e=>{const i=e.target.dataset.d;if(i!=null){songs.splice(i,1);save();render()}};
+$('zip').onclick=()=>{
+  const files=[{name:'lieder_index.py',data:new TextEncoder().encode(indexText())}];
+  songs.forEach(s=>files.push({name:'lieder/'+s.file,data:fromB64(s.b64)}));
+  try{
+    const url=URL.createObjectURL(zip(files)),a=document.createElement('a');
+    a.href=url;a.download='lumatrix.zip';document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),10000);
+    $('st').textContent='ZIP wird heruntergeladen (lumatrix.zip).';
+  }catch(e){$('st').textContent='Download nicht möglich.'}
+};
+render();
+</script></body></html>

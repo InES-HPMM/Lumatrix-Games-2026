@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>CATCH 64 einrichten</title>
+  <style>
+    :root{color-scheme:dark;--bg:#090d12;--card:#141a22;--field:#1d2530;--text:#f6f8fb;--muted:#9ba7b7;--green:#40e48a;--blue:#48aaff;--red:#ff6174}
+    *{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#15202c 0,var(--bg) 42%);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh}
+    main{width:min(920px,calc(100% - 32px));margin:0 auto;padding:48px 0}.brand{letter-spacing:.12em;font-weight:700}.tagline{font-size:clamp(28px,5vw,48px);line-height:1.05;margin:18px 0 12px;max-width:720px}.intro{color:var(--muted);font-size:18px;line-height:1.55;max-width:680px;margin-bottom:28px}
+    .grid{display:grid;grid-template-columns:1.15fr .85fr;gap:20px}.card{background:var(--card);border:1px solid rgba(255,255,255,.07);border-radius:20px;padding:22px;box-shadow:0 18px 50px rgba(0,0,0,.24)}h2{font-size:20px;margin:0 0 6px}.sub{color:var(--muted);line-height:1.45;margin:0 0 20px}
+    .fields{display:grid;grid-template-columns:1fr 1fr;gap:14px}.full{grid-column:1/-1}label{display:block;color:var(--muted);font-size:14px;margin:0 0 6px}input,select{width:100%;background:var(--field);color:var(--text);border:1px solid rgba(255,255,255,.1);border-radius:11px;padding:12px;font:inherit}input:focus,select:focus{outline:2px solid var(--blue);outline-offset:1px}.check{display:flex;align-items:center;gap:9px;color:var(--text);margin-top:4px}.check input{width:auto}
+    button{width:100%;margin-top:18px;border:0;border-radius:12px;padding:13px;background:var(--green);color:#06130c;font:inherit;font-weight:700}.formula{display:grid;gap:0}.row{display:flex;justify-content:space-between;gap:16px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.07)}.row:last-child{border-bottom:0}.row span{color:var(--muted)}.result strong{color:var(--green)}
+    .status{margin-top:20px}.status-line{display:flex;gap:10px;align-items:flex-start;padding:8px 0;color:var(--muted)}.dot{width:9px;height:9px;border-radius:50%;background:var(--blue);margin-top:6px;flex:0 0 auto}.error{color:var(--red);min-height:24px;margin-top:10px}.saved{color:var(--green);min-height:24px;margin-top:10px}
+    @media(max-width:720px){main{padding:28px 0}.grid,.fields{grid-template-columns:1fr}.full{grid-column:auto}}
+  </style>
+</head>
+<body>
+<main>
+  <div class="brand">CATCH 64</div>
+  <div class="tagline">Deine Verbindung. Deine Reserve. Dein perfekter Aufbruch.</div>
+  <p class="intro">CATCH 64 findet die nächste Verbindung, die du realistisch erreichst – und zeigt auf 64 LEDs, wann du losgehen musst.</p>
+  <div class="grid">
+    <section class="card">
+      <h2>Persönliche Strecke</h2><p class="sub">Einmal einstellen. Danach arbeitet CATCH 64 selbstständig.</p>
+      <form id="form">
+        <div class="fields">
+          <div class="full"><label for="from">Startbahnhof oder Haltestelle</label><input id="from" list="from-list" required autocomplete="off"><datalist id="from-list"></datalist></div>
+          <div class="full"><label for="to">Ziel</label><input id="to" list="to-list" required autocomplete="off"><datalist id="to-list"></datalist></div>
+          <div><label for="walk">Gehzeit zur Haltestelle · Minuten</label><input id="walk" type="number" min="0" max="60" step="1" inputmode="numeric" required></div>
+          <div><label for="reserve">Dein Reise-Stil</label><select id="reserve"><option value="0">🏃 Letzte Sekunde · 0 Min.</option><option value="1">⚡ Knapp, aber geplant · 1 Min.</option><option value="2">🚶 Sportlich, aber sicher · 2 Min.</option><option value="3">🙂 Ganz entspannt · 3 Min.</option><option value="5">☕ Zeit für einen Kaffee · 5 Min.</option><option value="7">🧘 Lieber etwas früher · 7 Min.</option><option value="10">🛟 Maximale Reserve · 10 Min.</option></select></div>
+          <label class="check full"><input id="direct" type="checkbox"> Nur Direktverbindungen verwenden</label>
+        </div>
+        <button type="submit">Strecke speichern</button>
+        <div class="saved" id="saved" aria-live="polite"></div><div class="error" id="error" role="alert"></div>
+      </form>
+    </section>
+    <aside>
+      <section class="card formula">
+        <h2>So entscheidet CATCH 64</h2><p class="sub">Live-Abfahrt minus Gehzeit minus deine Reserve.</p>
+        <div class="row"><span>Beispiel: Abfahrt</span><strong>in 13 Min.</strong></div>
+        <div class="row"><span>Gehzeit</span><strong id="walk-preview">− 6 Min.</strong></div>
+        <div class="row"><span>Reserve</span><strong id="reserve-preview">− 2 Min.</strong></div>
+        <div class="row result"><span>Du gehst los</span><strong id="result-preview">in 5 Min.</strong></div>
+      </section>
+      <section class="card status">
+        <h2>Systemstatus</h2>
+        <div class="status-line"><i class="dot"></i><span id="data-status">Warte auf Live-Daten</span></div>
+        <div class="status-line"><i class="dot"></i><span id="serial-status">Suche Lumatrix</span></div>
+      </section>
+    </aside>
+  </div>
+</main>
+<script>
+const $=id=>document.getElementById(id);let searchTimers={};
+async function json(url,options){const response=await fetch(url,options);const data=await response.json();if(!response.ok)throw new Error(data.error||'Anfrage fehlgeschlagen');return data}
+function updateFormula(){const walk=Number($('walk').value),reserve=Number($('reserve').value);$('walk-preview').textContent='− '+walk+' Min.';$('reserve-preview').textContent='− '+reserve+' Min.';$('result-preview').textContent='in '+Math.max(0,13-walk-reserve)+' Min.'}
+async function load(){const c=await json('/api/config');$('from').value=c.from;$('to').value=c.to;$('walk').value=String(c.walk_minutes);$('reserve').value=String(c.reserve_minutes);$('direct').checked=c.direct_only;updateFormula()}
+async function save(event){event.preventDefault();$('saved').textContent='';$('error').textContent='';try{await json('/api/config',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({from:$('from').value,to:$('to').value,walk_minutes:Number($('walk').value),reserve_minutes:Number($('reserve').value),direct_only:$('direct').checked,update_seconds:30,serial_port:''})});$('saved').textContent='Gespeichert – CATCH 64 berechnet die Verbindung jetzt neu.'}catch(error){$('error').textContent=error.message}}
+async function suggest(inputId,listId){const query=$(inputId).value.trim();if(query.length<2)return;try{const data=await json('/api/locations?q='+encodeURIComponent(query));const list=$(listId);list.replaceChildren(...data.locations.map(name=>{const option=document.createElement('option');option.value=name;return option}))}catch(_error){}}
+function queueSuggest(inputId,listId){clearTimeout(searchTimers[inputId]);searchTimers[inputId]=setTimeout(()=>suggest(inputId,listId),250)}
+async function status(){try{const s=await json('/api/status');$('data-status').textContent=s.data+(s.data_error?' · '+s.data_error:'');$('serial-status').textContent=s.serial+(s.serial_error?' · '+s.serial_error:'')+(s.pico?' · '+s.pico:'')}catch(_error){}}
+$('form').addEventListener('submit',save);$('walk').addEventListener('input',updateFormula);$('reserve').addEventListener('change',updateFormula);$('from').addEventListener('input',()=>queueSuggest('from','from-list'));$('to').addEventListener('input',()=>queueSuggest('to','to-list'));load().catch(error=>$('error').textContent=error.message);status();setInterval(status,2000);
+</script>
+</body>
+</html>

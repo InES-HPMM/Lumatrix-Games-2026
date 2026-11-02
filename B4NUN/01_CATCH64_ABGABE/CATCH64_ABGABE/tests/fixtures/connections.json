@@ -1,0 +1,34 @@
+{
+  "connections": [
+    {
+      "from": {
+        "departure": "2026-10-22T17:21:00+02:00",
+        "departureTimestamp": 1792682460,
+        "delay": 4,
+        "platform": "3",
+        "prognosis": {
+          "departure": "2026-10-22T17:25:00+02:00",
+          "platform": "4"
+        }
+      },
+      "products": ["S2"],
+      "sections": [
+        {"journey": {"category": "S", "number": "2", "to": "Zürich Flughafen"}}
+      ]
+    },
+    {
+      "from": {
+        "departure": "2026-10-22T17:29:00+02:00",
+        "departureTimestamp": 1792682940,
+        "delay": 0,
+        "platform": "2",
+        "prognosis": {"departure": "2026-10-22T17:29:00+02:00", "platform": null}
+      },
+      "products": ["IR35"],
+      "sections": [
+        {"journey": {"category": "IR", "number": "35", "to": "Bern"}}
+      ]
+    }
+  ]
+}
+

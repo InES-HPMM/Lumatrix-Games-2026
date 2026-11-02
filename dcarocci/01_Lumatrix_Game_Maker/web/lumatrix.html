@@ -1,0 +1,762 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Lumatrix · World maker</title><style>:root{color-scheme:dark;--bg:#10141b;--panel:#191f29;--inset:#111722;--line:#2b3544;--muted:#9ba9bb;--text:#e8edf5;--teal:#16849a;--focus:#54d5e7;--floor:#303b4c;--wall:#d8dfe9;--reset:#e54355;--player:#3064ee;--block:#dd518b;--switch:#23a75c;--pad:#a353d9;--door:#f0ae26;--goal:#28c46b}*{box-sizing:border-box}body{margin:0;background:var(--bg);font:14px/1.5 system-ui,-apple-system,Segoe UI,sans-serif;color:var(--text)}button,input,select,textarea{font:inherit}button{cursor:pointer;border:1px solid var(--line);border-radius:6px;background:#263144;color:var(--text);padding:8px 11px;transition:background .13s,border-color .13s}button:hover{background:#35435a;border-color:#62738c}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--focus);outline-offset:2px}button:disabled{opacity:.4;cursor:default}.primary,button.active{background:#0e738a;border-color:#2098ae}button.primary:hover{background:#138ba2}.danger{color:#ff9ba5}input,select,textarea{border:1px solid var(--line);background:var(--inset);color:var(--text);border-radius:5px;padding:8px;min-width:0;max-width:100%}input[type=checkbox]{accent-color:var(--teal);width:17px;height:17px}label{display:block;color:#b8c5d7;font-size:12px}label input:not([type=checkbox]),label select{display:block;width:100%;margin-top:4px}h1,h2,h3,p{margin:0}h2{font-size:17px;font-weight:650}h3{font-size:15px;margin-bottom:10px}.app-header{padding:24px 24px 22px;display:flex;gap:25px;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}.brand{display:flex;align-items:center;gap:13px}.brand-icon{font-size:38px;color:#54d5e7;line-height:1}h1{font-size:24px;letter-spacing:-.6px;font-weight:650}h1 span{font-size:10px;color:#88a2bb;letter-spacing:2px;margin-left:12px;font-weight:500}.brand p{font-size:12px;color:var(--muted);margin-top:1px}.project-tools{display:flex;gap:7px;align-items:center;flex-wrap:wrap}.project-tools input{width:165px}#savedState{font-size:11px;color:var(--muted);min-width:47px}main{display:grid;grid-template-columns:350px minmax(0,1fr);gap:16px;padding:20px 24px;max-width:1720px;margin:auto}.panel{background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:17px;box-shadow:0 4px 20px #0002}.panel-title{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}.panel-title code{font-size:12px;color:#a5bed3}.pill{font-size:11px;border:1px solid #3d4b5f;padding:2px 8px;border-radius:20px;color:#c2cfdf}.muted{font-size:12px;color:var(--muted)}.pan{display:flex;gap:5px;margin:16px 0 12px}.pan button{flex:1;padding:6px}.pan #origin{flex:2.3;font-size:12px}.world-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}.world-cell{width:100%;height:auto;aspect-ratio:1;min-height:0;border:1px solid #253044;border-radius:5px;background:var(--inset);padding:5px;text-align:left;font-size:10px;display:grid;place-items:center;position:relative;overflow:hidden}.world-cell.exists{border-color:#3c657f;background:#1e2d3f}.world-cell.selected{outline:2px solid #3aa5de;outline-offset:-1px;background:#203e54}.world-cell .coord{position:absolute;top:4px;left:5px;font-size:9px;line-height:12px;color:#b7c3d3;white-space:nowrap}.world-cell .empty{color:#65768d;font-size:9px}.mini{display:grid;grid-template-columns:repeat(8,1fr);gap:1px;width:min(58%,calc(100% - 32px));aspect-ratio:1}.mini i{display:block;border-radius:1px}.start-star{position:absolute;right:4px;bottom:2px;color:#75c7ff}.world-edit{border-top:1px solid var(--line);margin-top:17px;padding-top:14px}.field-row{display:flex;align-items:end;gap:8px;margin-bottom:10px}.field-row>*{flex:1;min-width:0}.field-row button{flex:0 0 auto}.button-row{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}.world-edit button{font-size:11px;padding:7px}.world-footer{margin-top:28px;color:#8294a9;font-size:9px;letter-spacing:.7px}.world-footer button{font-size:11px;letter-spacing:0}.status-dot{display:inline-block;width:6px;height:6px;background:#40cfad;border-radius:50%;margin-right:4px}.metadata{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:14px 0}.metadata>div{background:var(--inset);border:1px solid #263142;border-radius:5px;padding:7px 10px}.metadata span{display:block;font:9px ui-monospace,Consolas,monospace;letter-spacing:1px;color:#8393a9}.metadata strong{font:12px ui-monospace,Consolas,monospace;font-weight:500}.tabs{display:flex;gap:6px;border-bottom:1px solid var(--line);padding:0 0 11px;margin-bottom:14px}.tabs button{font-size:12px}.editor-body{display:grid;grid-template-columns:minmax(300px,470px) minmax(220px,1fr);gap:20px}.board-heading,.board-caption{display:flex;justify-content:space-between;color:#93a7bc;font-size:10px;gap:8px}.board-heading{letter-spacing:1px;margin:0 0 8px 18px}.board-caption{margin:9px 0 7px 18px}.board-frame{display:grid;grid-template-columns:13px 1fr;gap:5px}.board{display:grid;grid-template-columns:repeat(8,1fr);gap:4px;aspect-ratio:1;touch-action:none;user-select:none}.y-axis{display:grid;grid-template-rows:repeat(8,1fr);text-align:center}.y-axis span,.x-axis span{color:#788a9f;font:10px ui-monospace,monospace;align-self:center}.x-axis{grid-column:2;display:grid;grid-template-columns:repeat(8,1fr);text-align:center}.tile{border-radius:5px;border:1px solid #111927;padding:0;font-size:13px;font-weight:750;position:relative;min-width:0;aspect-ratio:1}.tile:hover{border:2px solid #72d9ed;filter:brightness(1.1)}.tile.chosen{outline:2px solid #55d2e5;outline-offset:-3px}.tile.start:after{content:'●';position:absolute;right:5px;top:1px;font-size:10px;color:white}.tile.spawn:before{content:'⌖';position:absolute;left:4px;bottom:0;font-size:12px;color:inherit}.tile .path-number{position:absolute;right:2px;bottom:0;border-radius:3px;background:#072f3f;color:#65ecff;padding:0 3px;font:9px ui-monospace,monospace}.swatch{width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;border-radius:4px;font-size:12px;font-weight:750}.palette{display:grid;grid-template-columns:1fr 1fr;gap:7px}.palette button{display:flex;align-items:center;gap:9px;text-align:left;padding:8px;font-size:12px}.palette button.active{box-shadow:inset 3px 0 #61d9e7}.legend{margin-top:16px;padding-top:12px;border-top:1px solid var(--line)}.legend p{margin:7px 0}.inspector .help{font-size:12px;color:#a8b9cb;margin:12px 0}.inspector select{width:100%}.inspector .object-list,.inspector .link-list{margin-bottom:13px}.stack{display:grid;gap:9px}.check{display:flex;gap:8px;align-items:center;font-size:12px}.source-list{display:grid;gap:5px;background:var(--inset);padding:9px;border-radius:5px;max-height:160px;overflow:auto}.notice{border:1px solid #3c536d;border-radius:5px;background:#152333;padding:10px;font-size:12px;color:#bfd1e4}.validation-list{padding-left:20px;font-size:12px}.validation-list li{margin:6px 0;overflow-wrap:anywhere}.error-text{color:#ff9ba5}.warning-text{color:#e7c484}.success-text{color:#78dbba}#widePanel:not(:empty){border-top:1px solid var(--line);margin-top:18px;padding-top:15px}textarea{width:100%;height:210px;resize:vertical;font:11px/1.5 ui-monospace,Consolas,monospace}.app-footer{display:flex;justify-content:space-between;gap:18px;padding:0 25px 20px;color:#92a3b8;font-size:11px}.app-footer #message{color:#a6dfdf;max-width:75%;white-space:pre-wrap}#emptyRoom{padding:65px 25px;text-align:center}#emptyRoom p{color:var(--muted);margin:15px}#pathInfo{overflow-wrap:anywhere}@media(min-width:1550px){main{grid-template-columns:410px minmax(0,1fr)}.editor-body{grid-template-columns:minmax(360px,510px) minmax(240px,1fr)}}@media(max-width:1150px){.app-header{align-items:flex-start;flex-direction:column;gap:15px}main{grid-template-columns:300px minmax(0,1fr);padding:15px}.editor-body{grid-template-columns:1fr}.board-wrap{max-width:500px}.world-cell{padding:3px}}@media(max-width:740px){main{grid-template-columns:1fr;padding:10px}.app-header{padding:15px}.project-tools{gap:5px}.project-tools button{font-size:12px;padding:7px}.world-footer{margin-top:15px}.app-footer{padding:5px 12px 16px}.app-footer>span:last-child{display:none}.metadata{font-size:11px}.tabs{flex-wrap:wrap}.panel{padding:12px}.editor-body{gap:15px}}
+dialog{width:min(620px,94vw);background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:10px;padding:20px}dialog::backdrop{background:#050a12bb}dialog textarea{margin-top:6px}
+.pico-progress{--upload-color:var(--focus);display:flex;align-items:center;gap:12px;min-height:66px;overflow:hidden;transition:border-color .2s}
+.upload-matrix{display:grid;grid-template-columns:repeat(4,5px);gap:3px;flex:none}
+.upload-matrix i{width:5px;height:5px;border-radius:1px;background:var(--upload-color);opacity:.18}
+.upload-details{min-width:0;flex:1}.upload-details>span{display:block;overflow-wrap:anywhere}
+.upload-track{height:5px;background:#0b1521;border-radius:2px;overflow:hidden;margin-top:9px;position:relative}
+.upload-track[hidden]{display:none}
+.upload-fill{height:100%;background:repeating-linear-gradient(90deg,var(--upload-color) 0 7px,transparent 7px 10px);transition:width .25s ease-out}
+.pico-progress[data-state=busy]{border-color:#267c90}
+.pico-progress[data-state=busy] .upload-matrix i{animation:upload-pixel 1.6s ease-in-out infinite}
+.upload-matrix i:nth-child(4n+2){animation-delay:.15s}.upload-matrix i:nth-child(4n+3){animation-delay:.3s}.upload-matrix i:nth-child(4n){animation-delay:.45s}
+.pico-progress[data-state=busy] .upload-track:after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,#c4faff80,transparent);width:35%;animation:upload-scan 1.8s ease-in-out infinite}
+.pico-progress[data-state=busy] .upload-track[data-indeterminate=true] .upload-fill{width:100%!important;opacity:.25}
+.pico-progress[data-state=success]{--upload-color:#78dbba;border-color:#367868}
+.pico-progress[data-state=success] .upload-matrix i{opacity:.9}
+.pico-progress[data-state=error]{--upload-color:#ff9ba5;border-color:#864956}
+.pico-progress[data-state=error] .upload-matrix i{opacity:.65}
+@keyframes upload-pixel{0%,70%,100%{opacity:.2}30%{opacity:1;box-shadow:0 0 6px #54d5e755}}
+@keyframes upload-scan{from{transform:translateX(-110%)}to{transform:translateX(400%)}}
+@media(prefers-reduced-motion:reduce){.pico-progress,.upload-fill{transition:none}.pico-progress[data-state=busy] .upload-matrix i{animation:none;opacity:.7}.pico-progress[data-state=busy] .upload-track:after{animation:none;display:none}}
+</style></head>
+<body>
+<header class="app-header"><div class="brand"><span class="brand-icon">▦</span><div><h1>Lumatrix <span>WORLD MAKER</span></h1><p>Small rooms. Connected possibilities.</p></div></div><div class="project-tools"><input id="projectName" aria-label="Project name" maxlength="120"><span id="savedState"></span><button id="undo">↶ Undo</button><button id="redo">↷ Redo</button><button id="save">Save JSON</button><button id="load">Load JSON</button><button id="exportTop" class="primary">Export Pico ↗</button><input id="file" type="file" accept=".json,application/json" hidden></div></header>
+<main>
+<aside class="panel world-panel"><div class="panel-title"><h2>World grid</h2><span id="roomCount" class="pill"></span></div><p class="muted">Select a room, or an empty coordinate to build.</p><div class="pan"><button id="panLeft" aria-label="Pan left">←</button><button id="panUp" aria-label="Pan up">↑</button><button id="origin">⌖ Origin</button><button id="panDown" aria-label="Pan down">↓</button><button id="panRight" aria-label="Pan right">→</button></div><div id="worldGrid" class="world-grid" aria-label="World rooms"></div><div class="world-edit"><div class="field-row"><label>Room x<input id="roomX" type="number" step="1"></label><label>Room y<input id="roomY" type="number" step="1"></label><button id="goCoord">Go</button></div><div class="button-row"><button id="createRoom">+ Create room</button><button id="duplicateRoom">Duplicate here</button><button id="deleteRoom" class="danger">Delete</button></div><p class="muted">Duplicate copies the selected room to the coordinates above. IDs stay local to each room.</p></div><div class="world-footer"><span class="status-dot"></span> OFFLINE · 8 × 8 · RASPBERRY PI PICO<div class="button-row"><button id="newProject">New world</button><button id="demo">Load demo</button><button id="recover">Recover</button></div></div></aside>
+<section class="panel room-panel"><div class="panel-title"><h2>Selected room</h2><code id="roomId"></code></div><div class="metadata"><div><span>ROOM COORDINATE</span><strong id="roomCoord"></strong></div><div><span>WORLD START</span><strong id="startInfo"></strong></div><div><span>HOVERED CELL</span><strong id="hoverInfo">none</strong></div><div><span>SELECTED CELL</span><strong id="cellInfo">none</strong></div></div><nav id="tabs" class="tabs" aria-label="Room sections"></nav><div id="emptyRoom" hidden><h3>A little more room for possibility.</h3><p>Create a room at this coordinate to begin.</p><button id="createEmpty" class="primary">+ Create room</button></div><div id="roomContent"><div class="editor-body"><div class="board-wrap"><div class="board-heading"><span>LOCAL MATRIX</span><span>y ↑ · x →</span></div><div class="board-frame"><div id="yAxis" class="y-axis"></div><div id="board" class="board" aria-label="Room layout"></div><div id="xAxis" class="x-axis"></div></div><div class="board-caption"><span id="toolInfo"></span><span>Row 0 is the bottom</span></div><div id="pathInfo" class="muted"></div></div><div id="inspector" class="inspector"></div></div><div id="widePanel"></div></div></section>
+</main><footer class="app-footer"><span id="message" role="status" aria-live="polite"></span></footer>
+<dialog id="loadDialog"><div class="panel-title"><h2>Load project</h2><button id="closeLoad" aria-label="Close project import">×</button></div><p class="muted">Choose a JSON file or paste its complete contents below.</p><div class="button-row"><button id="chooseFile">Choose JSON file</button></div><label for="importText">Project JSON</label><textarea id="importText" placeholder="Paste your saved project JSON here" spellcheck="false"></textarea><div class="button-row"><button id="importTextButton" class="primary">Load pasted JSON</button></div><p id="importError" class="error-text" role="status"></p></dialog>
+<script type="text/plain" id="picoUploadSource">'use strict';
+// Optional, dependency-free MicroPython raw REPL uploader. Loaded only on click.
+const PicoUpload = (() => {
+  const CHUNK_BYTES = 96, encoder = new TextEncoder();
+  const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
+  async function bounded(promise, ms, label) {
+    let timer;
+    try { return await Promise.race([promise, new Promise((_, reject) => { timer = setTimeout(() => reject(new Error(`Timeout: ${label}.`)), ms); })]); }
+    finally { clearTimeout(timer); }
+  }
+  function checksum(bytes) {
+    let a = 1, b = 0;
+    for (const byte of bytes) { a = (a + byte) % 65521; b = (b + a) % 65521; }
+    return (b * 65536 + a) >>> 0;
+  }
+  class RawRepl {
+    constructor(port, timeout) {
+      this.port = port; this.timeout = timeout; this.buffer = ''; this.closing = false;
+      this.reader = port.readable.getReader();
+      try { this.writer = port.writable.getWriter(); }
+      catch (error) { this.reader.releaseLock(); throw error; }
+      this.pump = this.receive();
+    }
+    async receive() {
+      const decoder = new TextDecoder();
+      try {
+        while (!this.closing) {
+          const {value, done} = await this.reader.read();
+          if (done) throw new Error('Device disconnected.');
+          this.buffer += decoder.decode(value, {stream: true});
+          if (this.buffer.length > 32768) throw new Error('Unexpected serial output: response exceeded 32 KB.');
+          this.wake?.();
+        }
+      } catch (error) {
+        if (!this.closing) this.error = new Error(`Device disconnected or serial read failed: ${error.message}`);
+        this.wake?.();
+      }
+    }
+    async until(marker, timeout = this.timeout) {
+      const deadline = Date.now() + timeout;
+      try {
+        while (true) {
+          const index = this.buffer.indexOf(marker);
+          if (index >= 0) {
+            const text = this.buffer.slice(0, index + marker.length);
+            this.buffer = this.buffer.slice(index + marker.length); return text;
+          }
+          if (this.error) throw this.error;
+          await bounded(new Promise(resolve => { this.wake = resolve; }), Math.max(0, deadline - Date.now()), 'waiting for MicroPython response');
+        }
+      } finally { this.wake = null; }
+    }
+    async write(text) {
+      if (this.error) throw this.error;
+      const bytes = encoder.encode(text);
+      // Match raw REPL's paced transfer convention; never flood the USB input.
+      for (let offset = 0; offset < bytes.length; offset += 128) {
+        await bounded(this.writer.write(bytes.subarray(offset, offset + 128)), this.timeout, 'writing to Pico');
+        if (offset + 128 < bytes.length) await pause(10);
+      }
+    }
+    async enter() {
+      await this.write('\r\x03\x03\x02'); // Stop main.py, return to friendly REPL.
+      await pause(80);
+      this.buffer = '';
+      await this.write('\r\x01');
+      try { await this.until('raw REPL; CTRL-B to exit\r\n>'); }
+      catch (error) { throw new Error(`No MicroPython raw REPL response. Check the selected device and firmware. ${error.message}`); }
+    }
+    async exec(code, timeout = this.timeout) {
+      await this.write(code); await this.write('\x04');
+      if (await this.until('OK') !== 'OK') throw new Error('Invalid raw REPL acknowledgement.');
+      const output = (await this.until('\x04', timeout)).slice(0, -1);
+      const errors = (await this.until('\x04')).slice(0, -1);
+      if (await this.until('>') !== '>') throw new Error('Missing raw REPL prompt.');
+      if (errors.trim()) throw new Error(`Pico: ${errors.trim()}`);
+      return output.trim();
+    }
+    async leave() {
+      await this.write('\r\x02'); await this.until('>>> ');
+    }
+    async close() {
+      this.closing = true;
+      let warning = '';
+      try { await bounded(this.reader.cancel(), 1500, 'canceling serial reader'); } catch (_) {}
+      try { await bounded(this.pump, 1500, 'stopping serial reader'); } catch (_) {}
+      try { this.reader.releaseLock(); } catch (_) { warning = 'Serial reader could not be released.'; }
+      try { this.writer.releaseLock(); } catch (_) { warning = 'Serial writer could not be released.'; }
+      try { await bounded(this.port.close(), 2000, 'closing serial port'); }
+      catch (_) { if (this.port.readable || this.port.writable) warning = 'Serial port could not close; unplug the Pico before reconnecting.'; }
+      return warning;
+    }
+  }
+  // Read back in bounded blocks; checksum uses only basic MicroPython features.
+  const CHECK_HELPER = `def _lu_check(path):
+ f=open(path,'rb');n=0;a=1;b=0
+ try:
+  while True:
+   data=f.read(256)
+   if not data:break
+   n+=len(data)
+   for v in data:
+    a=(a+v)%65521;b=(b+a)%65521
+ finally:
+  f.close()
+ return n,(b<<16)|a`;
+  async function verify(raw, path, bytes, sum) {
+    const result = await raw.exec(`_lu_n,_lu_c=_lu_check('${path}');print('LU_CHECK',_lu_n,_lu_c)`, 30000);
+    if (result !== `LU_CHECK ${bytes} ${sum}`) throw new Error(`Verification failed: expected ${bytes} bytes / checksum ${sum}, got ${result || 'no result'}.`);
+  }
+  async function upload(port, source, {onStatus = () => {}, restart = true, timeout = 6000} = {}) {
+    const bytes = encoder.encode(source), sum = checksum(bytes);
+    const token = Array.from(crypto.getRandomValues(new Uint32Array(2)), n => n.toString(16).padStart(8, '0')).join('');
+    const temp = `.lumatrix-${token}.tmp`;
+    let raw, opened = false, prepared = false, installed = false, installAttempted = false, failure, closeWarning = '', restartState = 'not-requested';
+    try {
+      onStatus('Connecting…');
+      const opening = port.open({baudRate: 115200, bufferSize: 4096});
+      try { await bounded(opening, timeout, 'opening serial port'); opened = true; }
+      catch (error) {
+        // open() cannot be canceled; close a port if it finishes after our timeout.
+        opening.then(() => port.close()).catch(() => {});
+        throw new Error(`Could not open serial port. Close Thonny or other serial apps, check USB, and try again. ${error.message}`);
+      }
+      if (!port.readable || !port.writable) throw new Error('Selected device has no readable/writable serial connection.');
+      if (port.setSignals) await bounded(port.setSignals({dataTerminalReady: true, requestToSend: false}), timeout, 'setting USB serial signals');
+      raw = new RawRepl(port, timeout);
+      onStatus('Preparing MicroPython…');
+      await raw.enter();
+      if (await raw.exec("import sys;print('LU_IMPL',sys.implementation.name)") !== 'LU_IMPL micropython') throw new Error('The selected device is not running MicroPython.');
+      // Refuse a name collision rather than overwrite any unrelated file.
+      await raw.exec(`import os\nos.chdir('/')\nfrom binascii import unhexlify as _lu_decode\nassert '${temp}' not in os.listdir(), 'Temporary filename collision'`);
+      prepared = true;
+      await raw.exec(`_lu_f=open('${temp}','wb')`);
+      onStatus('Uploading… 0%');
+      let lastPercent = 0;
+      for (let offset = 0; offset < bytes.length; offset += CHUNK_BYTES) {
+        const chunk = bytes.subarray(offset, offset + CHUNK_BYTES);
+        const hex = Array.from(chunk, b => b.toString(16).padStart(2, '0')).join('');
+        const count = await raw.exec(`print(_lu_f.write(_lu_decode('${hex}')))`);
+        if (count !== String(chunk.length)) throw new Error('Pico reported an incomplete file write (check free space).');
+        const percent = Math.floor((offset + chunk.length) * 100 / bytes.length);
+        if (percent !== lastPercent) { onStatus(`Uploading… ${percent}%`); lastPercent = percent; }
+      }
+      await raw.exec('_lu_f.close()');
+      onStatus('Verifying…');
+      await raw.exec(CHECK_HELPER);
+      await verify(raw, temp, bytes.length, sum);
+      // No remove('main.py'): rename either replaces it or reports an error.
+      onStatus('Installing main.py…');
+      installAttempted = true;
+      await raw.exec(`os.rename('${temp}','main.py')`);
+      await verify(raw, 'main.py', bytes.length, sum);
+      installed = true;
+      // Friendly REPL Ctrl+D boots main.py; raw REPL soft reset would skip it.
+      if (restart) {
+        onStatus('Restarting Pico…'); restartState = 'unconfirmed';
+        try { await raw.leave(); await raw.write('\x04'); restartState = 'requested'; }
+        catch (_) { /* A reset/disconnect after verified installation is not a failed upload. */ }
+      } else {
+        try { await raw.leave(); } catch (_) {}
+      }
+    } catch (error) { failure = error; }
+    finally {
+      if (raw) {
+        if (!installed && prepared && !raw.error) {
+          try {
+            await raw.enter();
+            await raw.exec("try:\n _lu_f.close()\nexcept Exception:\n pass");
+            await raw.exec(`try:\n os.remove('${temp}')\nexcept OSError:\n pass`);
+            await raw.leave();
+          } catch (_) { /* Disconnected: only this uniquely named temp file can remain. */ }
+        } else if (!installed && !raw.error) {
+          try { await raw.leave(); } catch (_) {}
+        }
+        closeWarning = await raw.close();
+      } else if (opened) {
+        try { await bounded(port.close(), 2000, 'closing serial port'); }
+        catch (_) { closeWarning = 'Serial port could not close; unplug the Pico before reconnecting.'; }
+      }
+    }
+    if (failure) throw new Error(`${failure.message}${installAttempted ? ' Installation status is unconfirmed; reconnect and retry before using main.py.' : ''}${closeWarning ? ' ' + closeWarning : ''}`);
+    const note = restartState === 'requested' ? 'Restart requested.' : restartState === 'unconfirmed' ? 'Restart could not be confirmed; press RESET or reconnect power.' : 'Press RESET or reconnect power to start.';
+    onStatus(`Upload successful! ${bytes.length} bytes verified. ${note}${closeWarning ? ' ' + closeWarning : ''}`);
+    return {bytes: bytes.length, checksum: sum, restart: restartState, closeWarning};
+  }
+  return {upload, checksum, CHUNK_BYTES};
+})();
+if (typeof module !== 'undefined') module.exports = PicoUpload;
+</script>
+<script>'use strict';
+// Shared data operations: browser and dependency-free Node tests.
+const Project = (() => {
+  const types = ['block', 'switch', 'pad', 'door', 'goal'];
+  const clone = value => JSON.parse(JSON.stringify(value));
+  const key = coord => coord.join(',');
+  const roomId = coord => 'room_' + coord.map(v => v < 0 ? 'm' + (-v) : String(v)).join('_');
+  const screenRow = y => 7 - y;
+  const localY = row => 7 - row;
+  const cell = (x, y) => Number.isInteger(x) && Number.isInteger(y) && x >= 0 && x < 8 && y >= 0 && y < 8;
+  const pair = value => Array.isArray(value) && value.length === 2 && value.every(Number.isSafeInteger);
+  const record = value => value !== null && typeof value === 'object' && !Array.isArray(value);
+  const validId = value => typeof value === 'string' && value.length > 0 && value.length <= 64;
+  function newRoom(coord) {
+    return {coord: [...coord], id: roomId(coord), spawn: [1, 1], layout: Array.from({length: 8}, () => Array(8).fill('F')), objects: [], connections: []};
+  }
+  function validate(project) {
+    const errors = [], warnings = [], importErrors = [];
+    const error = (message, repairable=false) => { errors.push(message); if (!repairable) importErrors.push(message); };
+    const extra = (obj, allowed, label) => {
+      for (const field of Object.keys(obj)) if (!allowed.includes(field)) error(`${label}: unknown property ${field}`);
+    };
+    if (!record(project)) return {errors: ['Project must be an object.'], warnings};
+    extra(project, ['formatVersion','name','start','rooms'], 'Project');
+    if (project.formatVersion !== 1) error('Unsupported formatVersion (expected 1).');
+    if (typeof project.name !== 'string') error('Project name must be text.');
+    if (!Array.isArray(project.rooms)) return {errors: [...errors, 'rooms must be an array.'], warnings};
+    if (!project.rooms.length) error('World needs at least one room.');
+    const coords = new Map();
+    const safeRooms = [];
+    for (const [index, room] of project.rooms.entries()) {
+      const label = `Room ${pair(room?.coord) ? '(' + room.coord.join(', ') + ')' : '#' + index}`;
+      if (!record(room)) { error(`${label}: expected an object.`); continue; }
+      extra(room, ['coord','id','spawn','layout','objects','connections'], label);
+      if (!pair(room.coord)) error(`${label}: coordinates must be two safe integers.`);
+      else {
+        const k = key(room.coord);
+        if (coords.has(k)) error(`${label}: duplicate room coordinates.`);
+        coords.set(k, room);
+        if (room.id !== roomId(room.coord)) error(`${label}: expected room ID ${roomId(room.coord)}.`);
+      }
+      const layoutOK = Array.isArray(room.layout) && room.layout.length === 8 && room.layout.every(row => Array.isArray(row) && row.length === 8 && row.every(t => ['F','W','R'].includes(t)));
+      if (!layoutOK) error(`${label}: layout must be 8 rows of 8 F/W/R tiles.`);
+      if (!Array.isArray(room.objects) || !Array.isArray(room.connections)) { error(`${label}: objects and connections must be arrays.`); continue; }
+      const ids = new Map(), occupied = new Map();
+      for (const obj of room.objects) {
+        const ol = `${label}, object ${record(obj) ? String(obj.id) : '?'}`;
+        if (!record(obj)) { error(`${ol}: expected an object.`); continue; }
+        extra(obj, ['id','type','x','y', ...(obj.type === 'switch' ? ['initial'] : []), ...(obj.type === 'door' ? ['initialOpen'] : [])], ol);
+        if (!validId(obj.id) || ids.has(obj.id)) error(`${ol}: invalid or duplicate ID.`);
+        ids.set(obj.id, obj);
+        if (!types.includes(obj.type)) error(`${ol}: unknown type.`);
+        if (!cell(obj.x, obj.y)) { error(`${ol}: coordinates outside 0..7.`); continue; }
+        if (layoutOK && room.layout[obj.y][obj.x] !== 'F') error(`${ol}: must be on floor, not wall/reset.`, true);
+        if ('initial' in obj && typeof obj.initial !== 'boolean') error(`${ol}: initial must be boolean.`);
+        if ('initialOpen' in obj && typeof obj.initialOpen !== 'boolean') error(`${ol}: initialOpen must be boolean.`);
+        const k = key([obj.x,obj.y]), others = occupied.get(k) || [];
+        for (const other of others) if (!([obj.type,other.type].includes('block') && [obj.type,other.type].includes('pad'))) error(`${ol}: overlaps object ${other.id}.`, true);
+        others.push(obj); occupied.set(k, others);
+      }
+      const checkPosition = (pos, what) => {
+        if (!pair(pos) || !cell(...pos)) { error(`${label}: invalid ${what} position.`); return; }
+        if (layoutOK && room.layout[pos[1]][pos[0]] === 'W') error(`${label}: ${what} is in a wall.`, true);
+        for (const obj of occupied.get(key(pos)) || []) if (obj.type === 'block' || (obj.type === 'door' && !obj.initialOpen)) error(`${label}: ${what} blocked by object ${obj.id}.`, true);
+      };
+      checkPosition(room.spawn, 'reset/spawn');
+      const linkIds = new Set();
+      for (const link of room.connections) {
+        const ll = `${label}, connection ${record(link) ? String(link.id) : '?'}`;
+        if (!record(link)) { error(`${ll}: expected an object.`); continue; }
+        extra(link, ['id','sources','target','mode','latch','path'], ll);
+        if (!validId(link.id) || linkIds.has(link.id)) error(`${ll}: invalid or duplicate ID.`);
+        linkIds.add(link.id);
+        if (!Array.isArray(link.sources)) error(`${ll}: sources must be an array.`);
+        else {
+          if (!link.sources.length) error(`${ll}: choose at least one source.`, true);
+          if (new Set(link.sources).size !== link.sources.length) error(`${ll}: duplicate sources.`);
+          for (const source of link.sources) if (!['switch','pad'].includes(ids.get(source)?.type)) error(`${ll}: source ${String(source)} is missing or incompatible.`, typeof source === 'string');
+        }
+        if (ids.get(link.target)?.type !== 'door') error(`${ll}: target ${String(link.target)} must be a door.`, typeof link.target === 'string');
+        if (!['ALL','ANY'].includes(link.mode)) error(`${ll}: mode must be ALL or ANY.`);
+        if (typeof link.latch !== 'boolean') error(`${ll}: latch must be boolean.`);
+        if (!Array.isArray(link.path) || !link.path.every(p => pair(p) && cell(...p))) error(`${ll}: invalid pulse path coordinates.`);
+        else for (let i = 1; i < link.path.length; i++) if (Math.abs(link.path[i][0]-link.path[i-1][0]) + Math.abs(link.path[i][1]-link.path[i-1][1]) !== 1) { warnings.push(`${ll}: path has a non-adjacent step.`); break; }
+      }
+      if (!room.objects.some(o => o?.type === 'goal')) warnings.push(`${label}: no goal; this may be a passage room.`);
+      safeRooms.push({room,checkPosition});
+    }
+    if (!record(project.start) || !pair(project.start.room) || !cell(project.start.x, project.start.y)) error('World start must have a room and local x/y.');
+    else {
+      extra(project.start, ['room','x','y'], 'World start');
+      const selected = safeRooms.find(r => pair(r.room.coord) && key(r.room.coord) === key(project.start.room));
+      if (!selected) error('World start room does not exist.');
+      else selected.checkPosition([project.start.x,project.start.y], 'world start');
+    }
+    warnings.push('Structural checks do not prove puzzle solvability. Pico memory limits world size.');
+    return {errors,warnings,importErrors};
+  }
+  function parse(text) {
+    const project = JSON.parse(text);
+    const result = validate(project);
+    const fatal = result.importErrors || result.errors;
+    if (fatal.length) throw new Error(fatal.join('\n'));
+    return project;
+  }
+  function serialize(project) {
+    // Flat arrays stay on one line, so layout is visibly eight matrix rows.
+    function pretty(value, depth) {
+      const indent = '  '.repeat(depth), childIndent = indent + '  ';
+      if (Array.isArray(value)) {
+        if (value.every(item => item === null || typeof item !== 'object')) return '[' + value.map(item => JSON.stringify(item)).join(', ') + ']';
+        return '[\n' + value.map(item => childIndent + pretty(item, depth + 1)).join(',\n') + '\n' + indent + ']';
+      }
+      if (record(value)) {
+        const entries = Object.entries(value);
+        if (!entries.length) return '{}';
+        return '{\n' + entries.map(([k,v]) => childIndent + JSON.stringify(k) + ': ' + pretty(v, depth + 1)).join(',\n') + '\n' + indent + '}';
+      }
+      return JSON.stringify(value);
+    }
+    return pretty(project, 0) + '\n';
+  }
+  // Escape all non-ASCII chars so lone surrogates cannot enter Python source.
+  function python(value) {
+    if (value === null) return 'None';
+    if (value === true) return 'True';
+    if (value === false) return 'False';
+    if (typeof value === 'string') return JSON.stringify(value).replace(/[\u007f-\u{10ffff}]/gu, c => {
+      const code = c.codePointAt(0);
+      return code > 0xffff ? '\\U' + code.toString(16).padStart(8,'0') : '\\u' + code.toString(16).padStart(4,'0');
+    });
+    if (typeof value === 'number' && Number.isFinite(value)) return String(value);
+    if (Array.isArray(value)) return '[' + value.map(python).join(', ') + ']';
+    if (record(value)) return '{' + Object.entries(value).map(([k,v]) => python(k) + ': ' + python(v)).join(', ') + '}';
+    throw new Error('Unsupported export value.');
+  }
+  function exportProgram(project, template) {
+    const result = validate(project);
+    if (result.errors.length) throw new Error(result.errors.join('\n'));
+    const entries = project.rooms.map(room => '(' + room.coord.join(', ') + '): ' + python(room));
+    return template.replace('# __LUMATRIX_WORLD__', () => 'WORLD = {' + entries.join(',\n') + '}\nSTART = ' + python(project.start));
+  }
+  return {types,clone,key,roomId,screenRow,localY,cell,newRoom,validate,parse,serialize,python,exportProgram};
+})();
+if (typeof module !== 'undefined') module.exports = Project;
+
+const RUNTIME_TEMPLATE = "# Lumatrix: ruhiges Raetselspiel fuer eine 8x8-LED-Matrix.\n# Konfiguration und Regeln lassen sich hier anpassen.\nCOLORS = {\n    'floor': (2, 3, 5), 'wall': (38, 38, 42), 'reset': (55, 3, 3),\n    'player': (3, 12, 60), 'block': (55, 4, 27),\n    'switch': (5, 32, 8), 'pad': (30, 5, 44),\n    'door': (55, 30, 2), 'open': (12, 8, 1), 'goal': (2, 55, 16),\n    'pulse': (3, 45, 55), 'active': (18, 60, 23)\n}\nDEBOUNCE_MS = 25\nREPEAT_DELAY_MS = 280\nREPEAT_INTERVAL_MS = 110\nPULSE_STEP_MS = 65\nDOOR_ANIMATION_MS = 180\nLOOP_MS = 10\n\n\ndef led_index(x, y):\n    return y * 8 + x\n\n\ndef screen_row(y):\n    return 7 - y\n\n\ndef room_id(coord):\n    return 'room_' + '_'.join(('m' + str(-v)) if v \u003c 0 else str(v) for v in coord)\n\n\ndef in_room(x, y):\n    return 0 \u003c= x \u003c 8 and 0 \u003c= y \u003c 8\n\n\nclass Game:\n    # Definitionen bleiben unveraendert; Zustaende entstehen beim ersten Besuch.\n    def __init__(self, world, start):\n        self.world = world\n        self.room = tuple(start['room'])\n        self.x, self.y = start['x'], start['y']\n        self.states = {}\n        self.time = 0\n        self.pulses = []\n        self.door_flashes = {}\n        self.evaluate(self.room, False)\n\n    def state(self, coord):\n        if coord not in self.states:\n            blocks, switches, doors = {}, {}, {}\n            for obj in self.world[coord]['objects']:\n                kind, oid = obj['type'], obj['id']\n                if kind == 'block':\n                    blocks[oid] = [obj['x'], obj['y']]\n                elif kind == 'switch':\n                    switches[oid] = obj.get('initial', False)\n                elif kind == 'door':\n                    doors[oid] = obj.get('initialOpen', False)\n            self.states[coord] = {\n                'blocks': blocks, 'switches': switches, 'doors': doors,\n                'pads': {}, 'latches': {}, 'conditions': {}, 'solved': False\n            }\n        return self.states[coord]\n\n    def block_at(self, coord, x, y):\n        for oid, pos in self.state(coord)['blocks'].items():\n            if pos[0] == x and pos[1] == y:\n                return oid\n        return None\n\n    def occupied(self, coord, x, y):\n        return (self.room == coord and self.x == x and self.y == y) or self.block_at(coord, x, y) is not None\n\n    def passable(self, coord, x, y):\n        if not in_room(x, y) or self.world[coord]['layout'][y][x] == 'W':\n            return False\n        state = self.state(coord)\n        for obj in self.world[coord]['objects']:\n            if obj['type'] == 'door' and obj['x'] == x and obj['y'] == y:\n                if not state['doors'][obj['id']]:\n                    return False\n        return True\n\n    def evaluate(self, coord, animate=True):\n        room, state = self.world[coord], self.state(coord)\n        for obj in room['objects']:\n            if obj['type'] == 'pad':\n                state['pads'][obj['id']] = self.occupied(coord, obj['x'], obj['y'])\n        desired = {}\n        for link in room['connections']:\n            values = [state['switches'].get(oid, state['pads'].get(oid, False)) for oid in link['sources']]\n            condition = all(values) if link['mode'] == 'ALL' else any(values)\n            cid = link['id']\n            if condition and not state['conditions'].get(cid, False) and animate and link['path']:\n                self.pulses.append((coord, link['path'], self.time))\n            state['conditions'][cid] = condition\n            if condition and link['latch']:\n                state['latches'][cid] = True\n            desired[link['target']] = desired.get(link['target'], False) or condition or state['latches'].get(cid, False)\n        for obj in room['objects']:\n            if obj['type'] != 'door':\n                continue\n            oid = obj['id']\n            opened = desired.get(oid, obj.get('initialOpen', False))\n            if not opened and self.occupied(coord, obj['x'], obj['y']):\n                opened = True\n            if state['doors'][oid] != opened and animate:\n                self.door_flashes[(coord, oid)] = self.time\n            state['doors'][oid] = opened\n\n    def reset_room(self):\n        coord = self.room\n        del self.states[coord]\n        self.x, self.y = self.world[coord]['spawn']\n        self.pulses = [p for p in self.pulses if p[0] != coord]\n        self.door_flashes = {k: v for k, v in self.door_flashes.items() if k[0] != coord}\n        self.evaluate(coord, False)\n\n    def move(self, dx, dy):\n        if abs(dx) + abs(dy) != 1:\n            return False\n        old = self.room\n        coord, x, y = old, self.x + dx, self.y + dy\n        if not in_room(x, y):\n            coord = (old[0] + dx, old[1] + dy)\n            x, y = x % 8, y % 8\n            if coord not in self.world:\n                return False\n            self.evaluate(coord, False)\n        if not self.passable(coord, x, y):\n            return False\n        block = self.block_at(coord, x, y)\n        if block is not None:\n            bx, by = x + dx, y + dy\n            if coord != old or not self.passable(coord, bx, by) or self.block_at(coord, bx, by) is not None:\n                return False\n            self.state(coord)['blocks'][block] = [bx, by]\n        self.room, self.x, self.y = coord, x, y\n        state = self.state(coord)\n        for obj in self.world[coord]['objects']:\n            if obj['type'] == 'switch' and obj['x'] == x and obj['y'] == y:\n                state['switches'][obj['id']] = not state['switches'][obj['id']]\n        if coord != old:\n            self.evaluate(old)\n        self.evaluate(coord)\n        if self.world[coord]['layout'][y][x] == 'R' and not state['solved']:\n            self.reset_room()\n        elif coord == old:\n            # Ein Ziel am Eingang loest den neuen Raum noch nicht.\n            for obj in self.world[coord]['objects']:\n                if obj['type'] == 'goal' and obj['x'] == x and obj['y'] == y:\n                    state['solved'] = True\n        return True\n\n    def update(self, elapsed_ms):\n        self.time += elapsed_ms\n        self.pulses = [p for p in self.pulses if self.time - p[2] \u003c len(p[1]) * PULSE_STEP_MS]\n        self.door_flashes = {k: v for k, v in self.door_flashes.items() if self.time - v \u003c DOOR_ANIMATION_MS}\n\n    def frame(self):\n        coord, room, state = self.room, self.world[self.room], self.state(self.room)\n        pixels = [COLORS['floor']] * 64\n        for y in range(8):\n            for x in range(8):\n                tile = room['layout'][y][x]\n                color = COLORS['wall'] if tile == 'W' else COLORS['floor']\n                if tile == 'R' and not state['solved']:\n                    color = COLORS['reset']\n                pixels[led_index(x, y)] = color\n        for obj in room['objects']:\n            kind, oid = obj['type'], obj['id']\n            if kind == 'block':\n                continue\n            color = COLORS[kind]\n            if kind == 'door':\n                color = COLORS['open'] if state['doors'][oid] else COLORS['door']\n                stamp = self.door_flashes.get((coord, oid))\n                if stamp is not None and (self.time - stamp) // 45 % 2 == 0:\n                    color = tuple(v // 2 for v in color)\n            if state['switches'].get(oid, False) or state['pads'].get(oid, False):\n                color = COLORS['active']\n            pixels[led_index(obj['x'], obj['y'])] = color\n        for pos in state['blocks'].values():\n            pixels[led_index(pos[0], pos[1])] = COLORS['block']\n        for pcoord, path, stamp in self.pulses:\n            if pcoord == coord:\n                step = (self.time - stamp) // PULSE_STEP_MS\n                if step \u003c len(path):\n                    x, y = path[step]\n                    pixels[led_index(x, y)] = COLORS['pulse']\n        pixels[led_index(self.x, self.y)] = COLORS['player']\n        return pixels\n\n\nclass Buttons:\n    # Feste Prioritaet: rechts, hoch, runter, links; Druck bleibt frei.\n    def __init__(self):\n        self.raw = [False] * 5\n        self.stable = [False] * 5\n        self.changed = [0] * 5\n        self.time = 0\n        self.direction = None\n        self.next_repeat = 0\n\n    def update(self, pressed, elapsed_ms):\n        self.time += elapsed_ms\n        press_event = False\n        for i in range(5):\n            if pressed[i] != self.raw[i]:\n                self.raw[i] = pressed[i]\n                self.changed[i] = self.time\n            if self.raw[i] != self.stable[i] and self.time - self.changed[i] >= DEBOUNCE_MS:\n                self.stable[i] = self.raw[i]\n                if i == 4 and self.stable[i]:\n                    press_event = True\n        selected = next((i for i in range(4) if self.stable[i]), None)\n        step = None\n        if selected != self.direction:\n            self.direction = selected\n            if selected is not None:\n                step = selected\n                self.next_repeat = self.time + REPEAT_DELAY_MS\n        elif selected is not None and self.time >= self.next_repeat:\n            step = selected\n            self.next_repeat = self.time + REPEAT_INTERVAL_MS\n        return {'direction': step, 'press': press_event}\n\n\n# __LUMATRIX_WORLD__\n\n# Hardware erst auf dem Pico starten.\ndef run():\n    from machine import Pin\n    from neopixel import NeoPixel\n    from utime import ticks_ms, ticks_diff, sleep_ms\n\n    np = NeoPixel(Pin(19, Pin.OUT), 64)\n    rechts = Pin(2, Pin.IN, Pin.PULL_UP)\n    hoch = Pin(3, Pin.IN, Pin.PULL_UP)\n    runter = Pin(6, Pin.IN, Pin.PULL_UP)\n    links = Pin(7, Pin.IN, Pin.PULL_UP)\n    druck = Pin(8, Pin.IN, Pin.PULL_UP)\n    pins = (rechts, hoch, runter, links, druck)\n    directions = ((1, 0), (0, 1), (0, -1), (-1, 0))\n    buttons = Buttons()\n    game = Game(WORLD, START)\n    previous = ticks_ms()\n    while True:\n        now = ticks_ms()\n        elapsed = ticks_diff(now, previous)\n        previous = now\n        game.update(elapsed)\n        event = buttons.update([pin.value() == 0 for pin in pins], elapsed)\n        if event['direction'] is not None:\n            dx, dy = directions[event['direction']]\n            game.move(dx, dy)\n        # event['press'] ist entprellt und absichtlich unbelegt.\n        for i, color in enumerate(game.frame()):\n            np[i] = color\n        np.write()\n        sleep_ms(LOOP_MS)\n\n\nif __name__ == '__main__':\n    run()\n";
+const DEMO = {"formatVersion": 1, "name": "Lumatrix \u00b7 13-room demo", "start": {"room": [0, 0], "x": 1, "y": 4}, "rooms": [{"coord": [0, 0], "id": "room_0_0", "spawn": [1, 4], "layout": [["W", "W", "W", "W", "W", "W", "W", "W"], ["W", "R", "F", "W", "F", "F", "F", "W"], ["W", "F", "F", "W", "F", "F", "F", "W"], ["W", "F", "F", "W", "F", "F", "F", "W"], ["W", "F", "F", "F", "F", "F", "F", "F"], ["W", "F", "F", "W", "F", "F", "F", "W"], ["W", "F", "F", "W", "F", "F", "F", "W"], ["W", "W", "W", "W", "W", "W", "W", "W"]], "objects": [{"id": "door_1", "type": "door", "x": 3, "y": 4, "initialOpen": false}, {"id": "switch_1", "type": "switch", "x": 1, "y": 6, "initial": false}, {"id": "goal_1", "type": "goal", "x": 7, "y": 4}], "connections": [{"id": "link_1", "sources": ["switch_1"], "target": "door_1", "mode": "ALL", "latch": true, "path": [[2, 6], [2, 5], [2, 4], [3, 4]]}]}, {"coord": [1, 0], "id": "room_1_0", "spawn": [1, 4], "layout": [["W", "W", "W", "W", "W", "W", "W", "W"], ["W", "F", "F", "F", "F", "F", "F", "W"], ["W", "F", "F", "W", "W", "W", "W", "W"], ["W", "F", "F", "W", "F", "F", "F", "W"], ["F", "F", "F", "W", "F", "F", "F", "W"], ["W", "F", "F", "W", "F", "F", "F", "W"], ["W", "R", "F", "F", "F", "F", "F", "W"], ["W", "W", "W", "W", "W", "W", "F", "W"]], "objects": [{"id": "goal_1", "type": "goal", "x": 0, "y": 4}, {"id": "door_1", "type": "door", "x": 6, "y": 7, "initialOpen": false}, {"id": "door_2", "type": "door", "x": 3, "y": 6, "initialOpen": false}, {"id": "pad_1", "type": "pad", "x": 6, "y": 1}, {"id": "block_1", "type": "block", "x": 2, "y": 4}], "connections": [{"id": "link_1", "sources": ["pad_1"], "target": "door_2", "mode": "ALL", "latch": true, "path": [[5, 1], [4, 1], [3, 1], [2, 1], [2, 2], [2, 3], [2, 4], [2, 5], [2, 6], [3, 6], [4, 6], [5, 6], [6, 6], [6, 7]]}, {"id": "link_2", "sources": ["pad_1"], "target": "door_1", "mode": "ALL", "latch": true, "path": []}]}, {"coord": [1, 1], "id": "room_1_1", "spawn": [6, 1], "layout": [["W", "W", "W", "W", "W", "W", "F", "W"], ["W", "F", "F", "F", "F", "W", "F", "W"], ["W", "F", "W", "W", "F", "W", "F", "W"], ["W", "F", "F", "W", "F", "W", "F", "W"], ["W", "W", "F", "W", "F", "W", "F", "W"], ["W", "F", "F", "W", "F", "W", "F", "W"], ["F", "F", "W", "W", "F", "F", "F", "W"], ["W", "W", "W", "W", "W", "W", "W", "W"]], "objects": [{"id": "goal_1", "type": "goal", "x": 6, "y": 0}, {"id": "goal_2", "type": "goal", "x": 0, "y": 6}], "connections": []}, {"coord": [0, 1], "id": "room_0_1", "spawn": [6, 6], "layout": [["W", "W", "W", "W", "W", "W", "W", "W"], ["W", "F", "F", "F", "F", "W", "F", "W"], ["W", "F", "F", "F", "F", "W", "F", "W"], ["W", "F", "F", "F", "F", "W", "F", "W"], ["F", "F", "F", "F", "F", "W", "F", "W"], ["W", "F", "F", "F", "F", "W", "F", "W"], ["W", "F", "F", "F", "F", "F", "F", "F"], ["W", "W", "W", "W", "W", "W", "W", "W"]], "objects": [{"id": "block_1", "type": "block", "x": 6, "y": 5}, {"id": "pad_1", "type": "pad", "x": 6, "y": 1}, {"id": "switch_1", "type": "switch", "x": 2, "y": 6, "initial": false}, {"id": "switch_2", "type": "switch", "x": 2, "y": 1, "initial": false}, {"id": "door_1", "type": "door", "x": 0, "y": 4, "initialOpen": false}, {"id": "door_2", "type": "door", "x": 5, "y": 6, "initialOpen": false}, {"id": "goal_1", "type": "goal", "x": 7, "y": 6}], "connections": [{"id": "link_1", "sources": ["pad_1"], "target": "door_2", "mode": "ALL", "latch": true, "path": [[6, 2], [6, 3], [6, 4], [6, 5], [6, 6], [5, 6]]}, {"id": "link_2", "sources": ["switch_1", "switch_2"], "target": "door_1", "mode": "ALL", "latch": true, "path": [[2, 5], [2, 2], [2, 4], [2, 3], [1, 4], [0, 4]]}]}, {"coord": [-1, 1], "id": "room_m1_1", "spawn": [6, 4], "layout": [["W", "W", "W", "W", "W", "W", "F", "W"], ["W", "R", "F", "F", "F", "F", "F", "W"], ["W", "F", "F", "F", "F", "F", "F", "W"], ["W", "F", "F", "F", "F", "F", "F", "W"], ["W", "F", "F", "F", "F", "F", "F", "F"], ["W", "F", "F", "F", "F", "F", "F", "W"], ["W", "R", "F", "F", "F", "F", "F", "W"], ["W", "W", "W", "W", "W", "W", "W", "W"]], "objects": [{"id": "goal_1", "type": "goal", "x": 7, "y": 4}, {"id": "door_1", "type": "door", "x": 6, "y": 0, "initialOpen": false}, {"id": "pad_1", "type": "pad", "x": 4, "y": 2}, {"id": "pad_2", "type": "pad", "x": 2, "y": 4}, {"id": "pad_3", "type": "pad", "x": 4, "y": 6}, {"id": "block_1", "type": "block", "x": 4, "y": 4}], "connections": [{"id": "link_1", "sources": ["pad_3"], "target": "door_1", "mode": "ALL", "latch": true, "path": [[4, 6], [5, 6], [5, 5], [5, 4], [5, 3], [6, 3], [6, 2], [6, 1], [6, 0]]}]}, {"coord": [-1, 0], "id": "room_m1_0", "spawn": [6, 6], "layout": [["W", "W", "W", "F", "W", "W", "W", "W"], ["W", "R", "F", "F", "W", "F", "F", "W"], ["W", "F", "F", "W", "F", "W", "F", "W"], ["W", "F", "F", "W", "F", "W", "F", "W"], ["W", "F", "F", "W", "F", "W", "F", "W"], ["W", "F", "F", "F", "F", "F", "F", "W"], ["W", "F", "F", "F", "F", "F", "F", "W"], ["W", "W", "W", "W", "W", "W", "F", "W"]], "objects": [{"id": "block_1", "type": "block", "x": 4, "y": 3}, {"id": "pad_1", "type": "pad", "x": 4, "y": 2}, {"id": "door_1", "type": "door", "x": 3, "y": 0, "initialOpen": false}, {"id": "goal_1", "type": "goal", "x": 6, "y": 7}, {"id": "switch_1", "type": "switch", "x": 1, "y": 6, "initial": false}, {"id": "door_2", "type": "door", "x": 4, "y": 4, "initialOpen": false}], "connections": [{"id": "link_1", "sources": ["switch_1"], "target": "door_2", "mode": "ALL", "latch": true, "path": [[2, 6], [3, 6], [4, 6], [4, 5], [4, 4]]}, {"id": "link_2", "sources": ["pad_1"], "target": "door_1", "mode": "ALL", "latch": true, "path": [[4, 3], [4, 4], [4, 5], [3, 5], [2, 5], [2, 4], [2, 3], [2, 2], [2, 1], [3, 1], [3, 0]]}]}, {"coord": [-1, -1], "id": "room_m1_m1", "spawn": [3, 6], "layout": [["W", "W", "W", "W", "W", "W", "W", "W"], ["W", "F", "W", "W", "F", "F", "F", "W"], ["W", "F", "F", "F", "F", "W", "F", "W"], ["W", "W", "F", "W", "W", "F", "F", "W"], ["W", "F", "F", "F", "F", "W", "F", "F"], ["W", "F", "W", "W", "W", "W", "W", "W"], ["W", "F", "F", "F", "F", "F", "F", "W"], ["W", "W", "W", "F", "W", "W", "W", "W"]], "objects": [{"id": "goal_1", "type": "goal", "x": 3, "y": 7}, {"id": "door_1", "type": "door", "x": 7, "y": 4, "initialOpen": false}, {"id": "door_2", "type": "door", "x": 5, "y": 1, "initialOpen": false}, {"id": "door_3", "type": "door", "x": 2, "y": 3, "initialOpen": false}, {"id": "door_4", "type": "door", "x": 1, "y": 5, "initialOpen": false}, {"id": "switch_1", "type": "switch", "x": 6, "y": 6, "initial": false}, {"id": "switch_2", "type": "switch", "x": 4, "y": 4, "initial": false}, {"id": "switch_3", "type": "switch", "x": 5, "y": 3, "initial": false}, {"id": "switch_4", "type": "switch", "x": 1, "y": 1, "initial": false}], "connections": [{"id": "link_1", "sources": ["switch_1"], "target": "door_4", "mode": "ALL", "latch": true, "path": [[5, 6], [4, 6], [3, 6], [2, 6], [1, 6], [1, 5]]}, {"id": "link_2", "sources": ["switch_2"], "target": "door_3", "mode": "ALL", "latch": true, "path": [[3, 4], [2, 4], [2, 3]]}, {"id": "link_3", "sources": ["switch_4"], "target": "door_2", "mode": "ALL", "latch": true, "path": [[1, 2], [2, 2], [3, 2], [4, 2], [4, 1], [5, 1]]}, {"id": "link_4", "sources": ["switch_3"], "target": "door_1", "mode": "ALL", "latch": true, "path": [[6, 3], [6, 4], [7, 4]]}]}, {"coord": [0, -1], "id": "room_0_m1", "spawn": [1, 1], "layout": [["W", "W", "W", "W", "W", "W", "W", "W"], ["W", "F", "F", "F", "F", "W", "F", "F"], ["W", "F", "W", "W", "F", "W", "F", "W"], ["W", "F", "W", "W", "F", "F", "F", "W"], ["F", "F", "W", "W", "W", "F", "W", "W"], ["W", "W", "W", "W", "W", "F", "F", "W"], ["W", "F", "F", "F", "F", "F", "F", "W"], ["W", "W", "W", "W", "W", "W", "W", "W"]], "objects": [{"id": "goal_1", "type": "goal", "x": 0, "y": 4}, {"id": "switch_1", "type": "switch", "x": 1, "y": 6, "initial": false}, {"id": "door_1", "type": "door", "x": 7, "y": 1, "initialOpen": false}], "connections": [{"id": "link_1", "sources": ["switch_1"], "target": "door_1", "mode": "ALL", "latch": true, "path": [[2, 6], [3, 6], [4, 6], [5, 6], [6, 6], [6, 5], [5, 5], [5, 4], [5, 3], [6, 3], [6, 2], [6, 1], [7, 1]]}]}, {"coord": [1, -1], "id": "room_1_m1", "spawn": [1, 1], "layout": [["W", "W", "W", "F", "W", "F", "W", "W"], ["F", "F", "W", "F", "W", "F", "F", "W"], ["W", "F", "W", "F", "W", "F", "F", "W"], ["W", "F", "W", "F", "F", "F", "F", "W"], ["W", "F", "W", "F", "W", "F", "F", "W"], ["W", "F", "W", "F", "F", "W", "F", "W"], ["W", "F", "F", "F", "W", "W", "F", "F"], ["W", "W", "W", "W", "W", "W", "W", "W"]], "objects": [{"id": "goal_1", "type": "goal", "x": 0, "y": 1}, {"id": "goal_2", "type": "goal", "x": 3, "y": 0}, {"id": "goal_3", "type": "goal", "x": 5, "y": 0}, {"id": "switch_1", "type": "switch", "x": 4, "y": 5, "initial": false}, {"id": "switch_2", "type": "switch", "x": 5, "y": 4, "initial": false}, {"id": "door_1", "type": "door", "x": 4, "y": 3, "initialOpen": false}, {"id": "door_2", "type": "door", "x": 7, "y": 6, "initialOpen": false}], "connections": [{"id": "link_1", "sources": ["switch_2"], "target": "door_1", "mode": "ALL", "latch": true, "path": [[5, 3], [4, 3]]}, {"id": "link_2", "sources": ["switch_1"], "target": "door_2", "mode": "ALL", "latch": true, "path": [[3, 5], [3, 4], [3, 3], [4, 3], [5, 3], [6, 3], [6, 4], [6, 5], [6, 6], [7, 6]]}]}, {"coord": [1, -2], "id": "room_1_m2", "spawn": [3, 6], "layout": [["W", "W", "W", "W", "W", "W", "W", "W"], ["W", "F", "F", "F", "W", "F", "F", "F"], ["W", "F", "W", "F", "W", "F", "W", "W"], ["W", "F", "W", "F", "F", "F", "W", "W"], ["W", "F", "W", "W", "W", "W", "W", "W"], ["W", "F", "W", "W", "W", "F", "F", "F"], ["W", "F", "F", "F", "W", "F", "W", "W"], ["W", "W", "W", "F", "W", "F", "W", "W"]], "objects": [{"id": "goal_1", "type": "goal", "x": 3, "y": 7}, {"id": "goal_2", "type": "goal", "x": 5, "y": 7}, {"id": "goal_3", "type": "goal", "x": 7, "y": 5}, {"id": "goal_4", "type": "goal", "x": 7, "y": 1}], "connections": []}, {"coord": [2, -2], "id": "room_2_m2", "spawn": [1, 1], "layout": [["W", "W", "W", "W", "W", "W", "W", "W"], ["F", "F", "F", "F", "F", "F", "F", "W"], ["W", "W", "W", "W", "W", "W", "F", "W"], ["W", "F", "F", "F", "F", "F", "F", "W"], ["W", "W", "W", "F", "W", "W", "W", "W"], ["F", "F", "W", "F", "W", "F", "R", "W"], ["W", "F", "F", "F", "W", "R", "F", "W"], ["W", "W", "W", "W", "W", "W", "W", "W"]], "objects": [{"id": "pad_1", "type": "pad", "x": 5, "y": 5}, {"id": "pad_2", "type": "pad", "x": 6, "y": 6}, {"id": "door_1", "type": "door", "x": 0, "y": 5, "initialOpen": false}, {"id": "goal_1", "type": "goal", "x": 0, "y": 1}, {"id": "switch_1", "type": "switch", "x": 1, "y": 3, "initial": false}], "connections": [{"id": "link_1", "sources": ["switch_1"], "target": "door_1", "mode": "ALL", "latch": false, "path": [[2, 3], [3, 3], [3, 4], [3, 5], [3, 6], [2, 6], [1, 6], [1, 5], [0, 5]]}]}, {"coord": [2, -1], "id": "room_2_m1", "spawn": [1, 6], "layout": [["W", "W", "W", "W", "W", "W", "W", "W"], ["W", "F", "F", "F", "F", "F", "F", "W"], ["W", "F", "F", "F", "F", "F", "F", "W"], ["W", "F", "F", "F", "F", "F", "F", "W"], ["W", "F", "F", "F", "F", "F", "F", "W"], ["W", "F", "F", "F", "F", "F", "R", "W"], ["F", "F", "W", "F", "W", "W", "W", "W"], ["W", "W", "W", "F", "W", "W", "W", "W"]], "objects": [{"id": "goal_1", "type": "goal", "x": 0, "y": 6}, {"id": "door_1", "type": "door", "x": 3, "y": 7, "initialOpen": false}, {"id": "door_2", "type": "door", "x": 3, "y": 6, "initialOpen": false}, {"id": "block_2", "type": "block", "x": 4, "y": 4}, {"id": "pad_1", "type": "pad", "x": 6, "y": 1}, {"id": "pad_2", "type": "pad", "x": 1, "y": 1}, {"id": "block_3", "type": "block", "x": 3, "y": 4}], "connections": [{"id": "link_1", "sources": ["pad_2"], "target": "door_1", "mode": "ALL", "latch": true, "path": [[2, 1], [3, 1], [3, 2], [3, 3], [3, 4], [3, 5], [3, 6], [3, 7]]}, {"id": "link_2", "sources": ["pad_1"], "target": "door_2", "mode": "ALL", "latch": true, "path": [[5, 1], [4, 1], [3, 1], [3, 2], [3, 3], [3, 4], [3, 5], [3, 6]]}]}, {"coord": [2, 0], "id": "room_2_0", "spawn": [3, 1], "layout": [["W", "W", "W", "F", "W", "W", "W", "W"], ["W", "F", "F", "F", "F", "F", "F", "W"], ["W", "F", "F", "W", "W", "F", "F", "W"], ["W", "F", "W", "F", "F", "W", "F", "W"], ["W", "F", "F", "F", "F", "F", "F", "W"], ["W", "F", "F", "F", "F", "F", "F", "W"], ["W", "F", "F", "F", "F", "F", "F", "W"], ["F", "W", "W", "W", "W", "W", "W", "F"]], "objects": [{"id": "door_1", "type": "door", "x": 7, "y": 7, "initialOpen": false}, {"id": "door_2", "type": "door", "x": 0, "y": 7, "initialOpen": false}, {"id": "switch_1", "type": "switch", "x": 2, "y": 5, "initial": false}, {"id": "switch_2", "type": "switch", "x": 5, "y": 5, "initial": false}, {"id": "goal_1", "type": "goal", "x": 3, "y": 0}], "connections": [{"id": "link_1", "sources": ["switch_1"], "target": "door_2", "mode": "ALL", "latch": false, "path": [[2, 4], [3, 4], [3, 5], [3, 6], [2, 6], [1, 6], [1, 5], [1, 4], [2, 4], [3, 4], [3, 5], [3, 6], [2, 6], [1, 6], [0, 6], [0, 7]]}, {"id": "link_2", "sources": ["switch_2"], "target": "door_1", "mode": "ALL", "latch": false, "path": [[5, 4], [6, 4], [6, 5], [6, 6], [5, 6], [4, 6], [4, 5], [4, 4], [5, 4], [6, 4], [6, 5], [6, 6], [7, 6], [7, 7]]}]}]};
+'use strict';
+const $ = id => document.getElementById(id);
+const P = Project;
+let project = P.clone(DEMO), selected = [...project.start.room], center = [0,0];
+let tab = 'Layout', tool = 'F', selectedCell = null, selectedObject = null, selectedLink = null;
+let undo = [], redo = [], saved = JSON.stringify(project), stroke = null, visited = new Set();
+const STORAGE = 'lumatrix-project-v1';
+const picoUploadState = {busy: false, status: '', restart: true, percent: null};
+// Connection drafts belong to the editor, never to the exported project.
+const connectionDrafts = new Map();
+const selectedRoomConnections = new Map();
+let nextConnectionDraft = 1;
+let connectionRoom = null;
+const styles = {F:['F','Floor','#303b4c','#e8edf5'],W:['W','Wall','#d8dfe9','#17202d'],R:['R','Reset','#e54355','#fff'],player:['P','World start','#3064ee','#fff'],spawn:['⌖','Reset spawn','#516880','#fff'],block:['B','Block','#dd518b','#fff'],switch:['S','Switch','#23a75c','#fff'],pad:['A','Pad','#a353d9','#fff'],door:['D','Door','#f0ae26','#20232a'],goal:['G','Goal','#28c46b','#10251b'],select:['↖','Select','#3e5067','#fff'],erase:['×','Erase object','#3e5067','#fff'],path:['C','Pulse path','#18b6c9','#062935']};
+function el(tag, attrs={}, ...children) {
+  const node = document.createElement(tag);
+  for (const [k,v] of Object.entries(attrs)) {
+    if (k === 'class') node.className = v;
+    else if (k.startsWith('on')) node.addEventListener(k.slice(2),v);
+    else if (k === 'text') node.textContent = v;
+    else node[k] = v;
+  }
+  for (const child of children.flat()) if (child !== null && child !== undefined) node.append(child instanceof Node ? child : document.createTextNode(String(child)));
+  return node;
+}
+function button(text, onclick, className='') { return el('button',{text,onclick,class:className}); }
+function room() { return project.rooms.find(r => P.key(r.coord) === P.key(selected)); }
+function startHere(r) { return P.key(project.start.room) === P.key(r.coord); }
+function message(text) { $('message').textContent = text; }
+function snapshot() { return JSON.stringify(project); }
+function connectionKey(id) { return JSON.stringify(['saved',id]); }
+function roomConnectionDrafts(r) {
+  const key=P.key(r.coord);
+  if(!connectionDrafts.has(key))connectionDrafts.set(key,new Map());
+  return connectionDrafts.get(key);
+}
+function connectionEntries(r) {
+  const drafts=roomConnectionDrafts(r);
+  return [...r.connections.map(c=>({key:connectionKey(c.id),value:drafts.get(connectionKey(c.id))?.value||c})),
+    ...Array.from(drafts,([key,d])=>({key,...d})).filter(d=>d.originalId===null)];
+}
+function connectionDraft(r,key=selectedLink) {
+  const drafts=roomConnectionDrafts(r);
+  if(!drafts.has(key)) {
+    const c=r.connections.find(c=>connectionKey(c.id)===key);
+    if(!c)return null;
+    drafts.set(key,{originalId:c.id,base:JSON.stringify(c),value:P.clone(c)});
+  }
+  return drafts.get(key);
+}
+function changedConnectionDraft(d) { return d.originalId===null||JSON.stringify(d.value)!==d.base; }
+function hasConnectionDrafts() {
+  return Array.from(connectionDrafts.values()).some(drafts=>Array.from(drafts.values()).some(changedConnectionDraft));
+}
+function dirty() { return snapshot() !== saved || hasConnectionDrafts(); }
+function updateConnectionDraftUI() {
+  $('savedState').textContent=snapshot()!==saved?'Unsaved':hasConnectionDrafts()?'Draft':'Saved';
+  const status=$('connectionDraftStatus'),r=room(),d=r&&connectionDraft(r);
+  if(status)status.textContent=d&&changedConnectionDraft(d)?'Draft kept in the editor. Apply connection to update JSON and Pico exports.':'Settings and pulse paths stay in a draft until Apply connection.';
+}
+function recoverWrite() {
+  try { localStorage.setItem(STORAGE,snapshot()); } catch (_) { message('Browser recovery unavailable. Save a JSON file to keep your work.'); }
+}
+function reconcile() {
+  for(const [key,drafts] of connectionDrafts) {
+    const current=project.rooms.find(r=>P.key(r.coord)===key);
+    if(!current){connectionDrafts.delete(key);selectedRoomConnections.delete(key);continue;}
+    for(const [draftKey,d] of drafts)if(d.originalId!==null) {
+      const applied=current.connections.find(c=>c.id===d.originalId);
+      if(!applied||(!changedConnectionDraft(d)&&JSON.stringify(applied)!==d.base))drafts.delete(draftKey);
+    }
+  }
+  const r = room();
+  const roomKey=r?P.key(r.coord):null;
+  if(roomKey!==connectionRoom){selectedLink=selectedRoomConnections.get(roomKey)||null;connectionRoom=roomKey;}
+  if (!r?.objects.some(o => o.id === selectedObject)) selectedObject = r?.objects[0]?.id || null;
+  if (!r || !connectionEntries(r).some(c=>c.key===selectedLink)) selectedLink = r?connectionEntries(r)[0]?.key||null:null;
+  if(r)selectedRoomConnections.set(roomKey,selectedLink);
+}
+function commit(before) {
+  if (before !== snapshot()) { undo.push(before); if (undo.length > 100) undo.shift(); redo = []; recoverWrite(); }
+  reconcile(); render();
+}
+function action(fn) {
+  const before = snapshot();
+  try { fn(); commit(before); } catch (error) { project = JSON.parse(before); message(error.message); render(); }
+}
+function askReplace() { return !dirty() || window.confirm(hasConnectionDrafts()?'Replace unsaved work and unapplied connection drafts? Apply drafts and save JSON first to keep them.':'Replace unsaved work? Save JSON first if you want to keep it.'); }
+function replaceProject(next, isSaved=false) {
+  if (!askReplace()) return false;
+  const before = snapshot(); project = next; connectionDrafts.clear(); selectedRoomConnections.clear();connectionRoom=null; selected = [...next.start.room]; center = [...selected]; selectedCell = null;
+  commit(before); saved = isSaved ? snapshot() : ''; render();
+  const errors = P.validate(project).errors.length;
+  message(errors ? `Draft loaded with ${errors} validation errors to repair before Pico export.` : 'Project loaded. Object IDs and connections preserved.'); return true;
+}
+function nextId(list, prefix) { let i = 1; while (list.some(o => o.id === prefix + '_' + i)) i++; return prefix + '_' + i; }
+function coordInputs() {
+  const coord = [Number($('roomX').value),Number($('roomY').value)];
+  if (!$('roomX').value.trim() || !$('roomY').value.trim() || !coord.every(Number.isSafeInteger)) throw new Error('Room coordinates must be safe integers.');
+  return coord;
+}
+function createRoom(coord=selected) {
+  action(() => {
+    if (project.rooms.some(r => P.key(r.coord) === P.key(coord))) throw new Error('A room already exists there.');
+    project.rooms.push(P.newRoom(coord)); selected = [...coord]; center = [...coord];
+  });
+}
+function swatch(kind) { const s = styles[kind]; return el('span',{class:'swatch',text:s[0],style:`background:${s[2]};color:${s[3]}`}); }
+function visualAt(r,x,y) {
+  const objects = r.objects.filter(o => o.x === x && o.y === y);
+  const obj = objects.find(o => o.type === 'block') || objects[0];
+  return startHere(r) && project.start.x === x && project.start.y === y ? 'player' : obj?.type || r.layout[y][x];
+}
+function renderWorld() {
+  const grid = $('worldGrid'); grid.replaceChildren();
+  for (let row=0; row<5; row++) for (let column=0; column<5; column++) {
+    const coord = [center[0]+column-2,center[1]+2-row];
+    if (!coord.every(Number.isSafeInteger)) continue;
+    const r = project.rooms.find(r => P.key(r.coord) === P.key(coord));
+    const node = button('',() => { selected = coord; selectedCell = null; reconcile(); render(); });
+    node.className = 'world-cell' + (r ? ' exists' : '') + (P.key(coord) === P.key(selected) ? ' selected' : '');
+    node.setAttribute('aria-label',`Room (${coord.join(', ')})${r ? '' : ', empty'}`);
+    node.append(el('span',{class:'coord',text:`(${coord.join(', ')})`}));
+    if (r) {
+      const mini = el('span',{class:'mini','ariaHidden':'true'});
+      for (let screen=0; screen<8; screen++) for (let x=0; x<8; x++) mini.append(el('i',{style:'background:' + styles[visualAt(r,x,P.localY(screen))][2]}));
+      node.append(mini);
+      if (startHere(r)) node.append(el('span',{class:'start-star',text:'●'}));
+    } else node.append(el('span',{class:'empty',text:'empty'}));
+    grid.append(node);
+  }
+  $('roomCount').textContent = `${project.rooms.length} rooms`;
+  $('roomX').value = selected[0]; $('roomY').value = selected[1];
+  $('createRoom').disabled = !!room(); $('deleteRoom').disabled = !room() || project.rooms.length === 1;
+  $('duplicateRoom').disabled = !room();
+}
+function renderBoard() {
+  const r = room(), board = $('board'); board.replaceChildren(); if (!r) return;
+  const link = connectionDraft(r)?.value;
+  const path = link?.path || [];
+  for (let screen=0; screen<8; screen++) for (let x=0; x<8; x++) {
+    const y = P.localY(screen), kind = visualAt(r,x,y), s = styles[kind];
+    const objects = r.objects.filter(o => o.x === x && o.y === y);
+    const node = el('button',{class:'tile',text:s[0],style:`background:${s[2]};color:${s[3]}`,title:`(${x}, ${y}) · ${r.layout[y][x]}${objects.map(o => ' · ' + o.id).join('')}`});
+    node.dataset.x=x; node.dataset.y=y;
+    node.setAttribute('aria-label',`Cell ${x}, ${y}: ${s[1]}`);
+    if (selectedCell && selectedCell[0] === x && selectedCell[1] === y) node.classList.add('chosen');
+    if (startHere(r) && project.start.x === x && project.start.y === y) node.classList.add('start');
+    if (r.spawn[0] === x && r.spawn[1] === y) node.classList.add('spawn');
+    const steps = path.map((p,i) => p[0] === x && p[1] === y ? i+1 : null).filter(Boolean);
+    if (steps.length) node.append(el('span',{class:'path-number',text:steps.join(',')}));
+    board.append(node);
+  }
+  $('toolInfo').textContent = styles[tool][1] + (tool === 'select' ? ' · click to inspect' : ' · click or drag');
+  $('pathInfo').textContent = tab === 'Connections' ? `Path ${link?.id || '—'}: ${path.length ? path.map(p => '('+p.join(',')+')').join(' → ') : 'no cells yet'}` : '● World start   ⌖ Reset spawn   Numbers show the selected pulse path.';
+}
+function palette(kinds) {
+  return el('div',{class:'palette'},kinds.map(kind => {
+    const b = button('',() => { tool = kind; renderBoard(); renderInspector(); },tool === kind ? 'active' : ''); b.append(swatch(kind),el('span',{text:styles[kind][1]})); return b;
+  }));
+}
+function field(label,input) { return el('label',{},label,input); }
+function number(value, max=7) { return el('input',{type:'number',min:0,max,step:1,value}); }
+function selectOptions(options,value,onchange) {
+  const node = el('select',{onchange});
+  for (const [id,text] of options) node.append(el('option',{value:id,text,selected:id===value}));
+  return node;
+}
+function renderInspector() {
+  const panel = $('inspector'), r = room(); panel.replaceChildren(); $('widePanel').replaceChildren(); if (!r) return;
+  if (tab === 'Layout') {
+    panel.append(el('h3',{text:'Layout'}),palette(['F','W','R','player','spawn','select']),el('div',{class:'legend'},el('p',{class:'muted',text:'Terrain and objects are separate layers. Changing terrain keeps object records; validation flags conflicts.'}),el('p',{class:'muted',text:'World start belongs to one player. Every room has its own reset spawn.'}),el('p',{class:'notice',text:'8 × 8 cells · y increases upwards. Reset tiles restore only this room until its goal is reached.'})));
+  } else if (tab === 'Objects') {
+    panel.append(el('h3',{text:'Explicit objects'}),palette([...P.types,'select','erase']));
+    const chooser = selectOptions([['','Choose an object'],...r.objects.map(o => [o.id,`${o.id} · ${o.type} (${o.x}, ${o.y})`])],selectedObject, e => { selectedObject=e.target.value; const obj=r.objects.find(o=>o.id===selectedObject); if(obj) selectedCell=[obj.x,obj.y]; renderBoard(); renderInspector(); });
+    panel.append(el('div',{class:'legend object-list'},chooser));
+    const obj = r.objects.find(o => o.id === selectedObject);
+    if (obj) {
+      const id = el('input',{value:obj.id,maxLength:64}), x=number(obj.x), y=number(obj.y);
+      const initial = el('input',{type:'checkbox',checked:obj.type==='door' ? !!obj.initialOpen : !!obj.initial});
+      panel.append(el('div',{class:'stack'},field('Stable object ID',id),el('div',{class:'field-row'},field('x',x),field('y',y))));
+      if (['switch','door'].includes(obj.type)) panel.append(el('label',{class:'check'},initial,obj.type==='door' ? 'Initially open' : 'Initially on'));
+      panel.append(el('div',{class:'button-row'},button('Apply object',() => action(() => {
+        const name=id.value.trim(), nx=Number(x.value), ny=Number(y.value);
+        if (!name || r.objects.some(o=>o!==obj && o.id===name)) throw new Error('Object ID must be unique and nonempty.');
+        if (!x.value || !y.value || !P.cell(nx,ny)) throw new Error('Object coordinates must be integers from 0 to 7.');
+        const old=obj.id; obj.id=name; obj.x=nx; obj.y=ny;
+        if(obj.type==='door') obj.initialOpen=initial.checked;
+        if(obj.type==='switch') obj.initial=initial.checked;
+        for(const c of r.connections) { c.sources=c.sources.map(s=>s===old?name:s); if(c.target===old)c.target=name; }
+        for(const d of roomConnectionDrafts(r).values()) {
+          const renameRefs=c=>{c.sources=c.sources.map(s=>s===old?name:s);if(c.target===old)c.target=name;};
+          renameRefs(d.value);
+          if(d.base!==null){const base=JSON.parse(d.base);renameRefs(base);d.base=JSON.stringify(base);}
+        }
+        selectedObject=name; selectedCell=[nx,ny];
+      }),'primary'),button('Delete object',()=>action(()=>{r.objects=r.objects.filter(o=>o!==obj); message('Object deleted. Connections that referenced it are flagged in Validation.');}),'danger')));
+    }
+    panel.append(el('p',{class:'help',text:'Click an object with Select to edit it. Move it with x/y. Blocks may share pads; other overlapping objects fail validation. Renaming an ID updates its connections.'}));
+  } else if (tab === 'Connections') renderConnections(panel,r);
+  else if (tab === 'Validation') {
+    panel.append(el('h3',{text:'Project validation'}),el('p',{class:'help',text:'Checks every room, ID, starting position and connection. Errors prevent export. Warnings allow export.'}),button('Check project',()=>{renderInspector();message('Validation refreshed.');},'primary'));
+    renderValidation($('widePanel'));
+  } else {
+    panel.append(el('h3',{text:'Ready for the Pico'}),el('p',{class:'help',text:'Export a complete MicroPython program with hardware, configuration, world, engine and main loop.'}),el('div',{class:'button-row'},button('Download main.py',downloadProgram,'primary'),el('button',{id:'picoUpload',text:'Upload to Pico',onclick:uploadProgram})),el('label',{class:'check'},el('input',{id:'picoRestart',type:'checkbox',checked:picoUploadState.restart,onchange:e=>{picoUploadState.restart=e.target.checked;}}),'Restart after upload'),el('p',{class:'help',text:'Upload replaces the selected Pico’s main.py. Connect a Pico with MicroPython installed and close Thonny or other serial apps first.'}),picoUploadNotice(),el('p',{class:'help',text:'Download remains available for Thonny. JSON saves remain your editable source.'}));
+    updatePicoUploadUI();
+    if(hasConnectionDrafts())panel.append(el('p',{class:'notice',text:'Unapplied connection drafts are excluded from JSON and Pico exports. Return to Connections and Apply connection to include them.'}));
+    const result = renderValidation($('widePanel'));
+    if(!result.errors.length) $('widePanel').append(el('textarea',{value:P.exportProgram(project,RUNTIME_TEMPLATE),readOnly:true,'ariaLabel':'Complete exported MicroPython program'}));
+  }
+}
+function renderConnections(panel,r) {
+  panel.append(el('h3',{text:'Connections'}));
+  const chooser=selectOptions([['','Choose a connection'],...connectionEntries(r).map(c=>[c.key,`${c.value.id} → ${c.value.target || 'choose door'}${roomConnectionDrafts(r).has(c.key)&&changedConnectionDraft(roomConnectionDrafts(r).get(c.key))?' · draft':''}`])],selectedLink,e=>{selectedLink=e.target.value;selectedRoomConnections.set(P.key(r.coord),selectedLink);renderBoard();renderInspector();});
+  chooser.setAttribute('aria-label','Selected connection');
+  panel.append(chooser,el('div',{class:'button-row'},button('+ Connection',()=>action(()=>{
+    const id=nextId(connectionEntries(r).map(c=>c.value),'link');
+    selectedLink=JSON.stringify(['draft',nextConnectionDraft++]);
+    roomConnectionDrafts(r).set(selectedLink,{originalId:null,base:null,value:{id,sources:[],target:r.objects.find(o=>o.type==='door')?.id||'',mode:'ALL',latch:false,path:[]}});
+  }))));
+  const draft=connectionDraft(r),c=draft?.value;
+  if (!c) {panel.append(el('p',{class:'help',text:'Place a switch or pad and a door in Objects, then connect them here.'}));return;}
+  const id=el('input',{value:c.id,maxLength:64}), sources=el('div',{class:'source-list'});
+  id.addEventListener('input',()=>{c.id=id.value;updateConnectionDraftUI();});
+  for(const obj of r.objects.filter(o=>['switch','pad'].includes(o.type))) sources.append(el('label',{class:'check'},el('input',{type:'checkbox',value:obj.id,checked:c.sources.includes(obj.id),onchange:()=>{c.sources=Array.from(sources.querySelectorAll('input:checked'),n=>n.value);updateConnectionDraftUI();}}),obj.id+' · '+obj.type));
+  if(!sources.children.length)sources.append(el('span',{class:'muted',text:'No switch/pad sources in this room.'}));
+  const target=selectOptions([['','Choose target door'],...r.objects.filter(o=>o.type==='door').map(o=>[o.id,o.id])],c.target,e=>{c.target=e.target.value;updateConnectionDraftUI();});
+  const mode=selectOptions([['ALL','ALL · every source on'],['ANY','ANY · at least one on']],c.mode,e=>{c.mode=e.target.value;updateConnectionDraftUI();});
+  const latch=el('input',{type:'checkbox',checked:c.latch,onchange:e=>{c.latch=e.target.checked;updateConnectionDraftUI();}});
+  panel.append(el('div',{class:'stack'},field('Connection ID',id),field('Sources',sources),field('Target door',target),field('Condition',mode),el('label',{class:'check'},latch,'Latch open after first activation')));
+  panel.append(el('div',{class:'button-row'},button('Apply connection',()=>action(()=>{
+    const next=c.id.trim(),applied=r.connections.find(o=>o.id===draft.originalId);
+    if(!next||r.connections.some(o=>o!==applied&&o.id===next))throw new Error('Connection ID must be unique and nonempty.');
+    if(applied&&JSON.stringify(applied)!==draft.base)throw new Error('The applied connection changed while this draft was open. Discard draft to reload it.');
+    const value=P.clone(c);value.id=next;
+    if(applied)r.connections[r.connections.indexOf(applied)]=value;else r.connections.push(value);
+    roomConnectionDrafts(r).delete(selectedLink);selectedLink=connectionKey(next);
+    message('Connection and pulse path applied to the project.');
+  }),'primary'),button('Discard draft',()=>{roomConnectionDrafts(r).delete(selectedLink);reconcile();render();}),button('Delete',()=>action(()=>{r.connections=r.connections.filter(o=>o.id!==draft.originalId);roomConnectionDrafts(r).delete(selectedLink);}), 'danger')));
+  panel.append(el('p',{id:'connectionDraftStatus',class:'notice'}));updateConnectionDraftUI();
+  panel.append(el('div',{class:'legend'},palette(['path','select']),el('p',{class:'help',text:'Click or drag an ordered pulse path. Inputs and paths stay in your draft while navigating; Apply connection commits them together. Paths may cross any tile and never affect collision.'}),el('div',{class:'button-row'},button('Remove last cell',()=>action(()=>c.path.pop())),button('Clear path',()=>action(()=>{c.path=[];})))));
+}
+function renderValidation(panel) {
+  const result=P.validate(project);
+  panel.append(el('h3',{class:result.errors.length?'error-text':'success-text',text:result.errors.length?`${result.errors.length} export errors`:'No structural errors · ready to export'}));
+  if(result.errors.length)panel.append(el('ul',{class:'validation-list error-text'},result.errors.map(t=>el('li',{text:t}))));
+  panel.append(el('ul',{class:'validation-list warning-text'},result.warnings.map(t=>el('li',{text:t}))));
+  return result;
+}
+function render() {
+  renderWorld(); const r=room();
+  $('projectName').value=project.name;
+  updateConnectionDraftUI();
+  $('undo').disabled=!undo.length;$('redo').disabled=!redo.length;
+  $('roomId').textContent=r?.id||'empty';$('roomCoord').textContent=`(${selected.join(', ')})`;
+  $('startInfo').textContent=`Room (${project.start.room.join(', ')}) · (${project.start.x}, ${project.start.y})`;
+  $('cellInfo').textContent=selectedCell?`(${selectedCell.join(', ')}) · LED ${selectedCell[1]*8+selectedCell[0]}`:'none';
+  $('emptyRoom').hidden=!!r;$('roomContent').hidden=!r;
+  $('tabs').replaceChildren(...['Layout','Objects','Connections','Validation','Export'].map(name=>button(name,()=>{tab=name;if(name==='Connections')tool='select';render();},tab===name?'active':'')));
+  renderBoard();renderInspector();
+}
+function applyCell(x,y) {
+  const r=room();if(!r)return;const k=P.key([x,y]);if(visited.has(k))return;visited.add(k);
+  selectedCell=[x,y];
+  const existing=r.objects.filter(o=>o.x===x&&o.y===y);
+  if(tool==='select')selectedObject=(existing.find(o=>o.type==='block')||existing[0])?.id||null;
+  else if(['F','W','R'].includes(tool))r.layout[y][x]=tool;
+  else if(tool==='player')project.start={room:[...selected],x,y};
+  else if(tool==='spawn')r.spawn=[x,y];
+  else if(tool==='erase')r.objects=r.objects.filter(o=>o.x!==x||o.y!==y);
+  else if(tool==='path') {
+    const c=connectionDraft(r)?.value;
+    if(c)c.path.push([x,y]);else message('Create and select a connection first.');
+  } else {
+    if(r.layout[y][x]!=='F') {message('Place objects on floor. Paint F first.');return;}
+    if(existing.some(o=>!((o.type==='pad'&&tool==='block')||(o.type==='block'&&tool==='pad')))) {message('This cell already has an object. Select to edit, or erase it.');return;}
+    const obj={id:nextId(r.objects,tool),type:tool,x,y};if(tool==='switch')obj.initial=false;if(tool==='door')obj.initialOpen=false;
+    r.objects.push(obj);selectedObject=obj.id;
+  }
+  $('cellInfo').textContent=`(${x}, ${y}) · LED ${y*8+x}`;renderBoard();
+}
+$('board').addEventListener('pointerdown',e=>{
+  const node=e.target.closest('.tile');if(!node||e.button!==0)return;e.preventDefault();stroke=snapshot();visited=new Set();applyCell(Number(node.dataset.x),Number(node.dataset.y));
+});
+$('board').addEventListener('pointerover',e=>{
+  const node=e.target.closest('.tile');if(!node)return;const x=Number(node.dataset.x),y=Number(node.dataset.y);$('hoverInfo').textContent=`(${x}, ${y}) · LED ${y*8+x}`;
+  if(stroke!==null && (e.buttons&1) && tool!=='select')applyCell(x,y);
+});
+$('board').addEventListener('pointerleave',()=>{$('hoverInfo').textContent='none';});
+function finishStroke(){if(stroke!==null){const before=stroke;stroke=null;commit(before);}}
+window.addEventListener('pointerup',finishStroke);window.addEventListener('pointercancel',finishStroke);window.addEventListener('blur',finishStroke);
+$('board').addEventListener('keydown',e=>{
+  if(e.key!=='Enter'&&e.key!==' ')return;const node=e.target.closest('.tile');if(!node)return;e.preventDefault();action(()=>{visited=new Set();applyCell(Number(node.dataset.x),Number(node.dataset.y));});
+});
+function download(name,text,type){const url=URL.createObjectURL(new Blob([text],{type}));const a=el('a',{href:url,download:name});document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+function downloadProgram(){try{download('main.py',P.exportProgram(project,RUNTIME_TEMPLATE),'text/x-python');message('main.py exported. Upload it to the Pico with Thonny.');}catch(error){tab='Validation';render();message(error.message);}}
+function picoUnavailable() {
+  if (!window.isSecureContext) return 'Direct upload needs HTTPS or localhost. Download main.py still works.';
+  if (!navigator.serial?.requestPort) return 'Direct upload needs Web Serial in desktop Chrome or Edge. Download main.py still works.';
+  return '';
+}
+function picoUploadNotice() {
+  return el('div',{id:'picoUploadProgress',class:'notice pico-progress'},
+    el('div',{class:'upload-matrix',ariaHidden:'true'},Array.from({length:16},()=>el('i'))),
+    el('div',{class:'upload-details'},
+      el('span',{id:'picoUploadStatus',role:'status',ariaLive:'polite'}),
+      el('div',{id:'picoUploadTrack',class:'upload-track',role:'progressbar',ariaLabel:'Program upload',ariaValueMin:'0',ariaValueMax:'100'},el('div',{id:'picoUploadFill',class:'upload-fill'}))));
+}
+function updatePicoUploadUI() {
+  const upload = $('picoUpload'), status = $('picoUploadStatus'), restart = $('picoRestart');
+  const unsupported = picoUnavailable();
+  if (upload) upload.disabled = picoUploadState.busy || !!unsupported || P.validate(project).errors.length > 0;
+  if (restart) restart.disabled = picoUploadState.busy;
+  if (status) status.textContent = picoUploadState.status || unsupported || 'Ready. Only the device you select will be accessed.';
+  const progress=$('picoUploadProgress'), track=$('picoUploadTrack'), fill=$('picoUploadFill');
+  const success=picoUploadState.status.startsWith('Upload successful!');
+  const state=success?'success':picoUploadState.busy?'busy':picoUploadState.status.startsWith('Upload error:')?'error':'idle';
+  if(progress)progress.dataset.state=state;
+  if(track) {
+    track.hidden=state==='idle';
+    track.dataset.indeterminate=picoUploadState.percent===null?'true':'false';
+    if(picoUploadState.percent===null)track.removeAttribute('aria-valuenow');
+    else track.setAttribute('aria-valuenow',String(picoUploadState.percent));
+  }
+  if(fill)fill.setAttribute('style',`width:${picoUploadState.percent??0}%`);
+}
+async function uploadProgram() {
+  if (picoUploadState.busy) return;
+  let source;
+  try { source = P.exportProgram(project,RUNTIME_TEMPLATE); }
+  catch (error) { tab='Validation';render();message(error.message);return; }
+  const unsupported = picoUnavailable();
+  if (unsupported) { message(unsupported); return; }
+  function status(text) {
+    const percent=text.match(/^Uploading… (\d+)%$/);
+    if(percent)picoUploadState.percent=Number(percent[1]);
+    if(text.startsWith('Upload successful!'))picoUploadState.percent=100;
+    picoUploadState.status=text;updatePicoUploadUI();message(text);
+  }
+  picoUploadState.busy=true;picoUploadState.percent=null;status('Select your Pico…');
+  try {
+    // This fixed bundled source is trusted application code, never project data.
+    if (typeof PicoUpload === 'undefined') {
+      const script=document.createElement('script');script.textContent=$('picoUploadSource').textContent;
+      document.head.append(script);script.remove();
+    }
+    // requestPort is called in this click handler, before any asynchronous wait.
+    let port;
+    try { port=await navigator.serial.requestPort(); }
+    catch(error) {
+      if(error.name==='NotFoundError') { status('No device selected. Connect the Pico by USB and try again.');return; }
+      throw error;
+    }
+    await PicoUpload.upload(port,source,{restart:picoUploadState.restart,onStatus:status});
+  } catch(error) { status('Upload error: '+error.message); }
+  finally { picoUploadState.busy=false;updatePicoUploadUI(); }
+}
+$('save').onclick=()=>{download('lumatrix-project.json',P.serialize(project),'application/json');saved=snapshot();render();message(hasConnectionDrafts()?'JSON download requested. Unapplied connection drafts are excluded; Apply connection to include them.':'JSON download requested. Keep it as your portable editable project.');};
+$('load').onclick=()=>{$('importError').textContent='';$('loadDialog').showModal();};
+$('closeLoad').onclick=()=>$('loadDialog').close();
+$('chooseFile').onclick=()=>$('file').click();
+$('importTextButton').onclick=()=>{try{if(replaceProject(P.parse($('importText').value),true))$('loadDialog').close();}catch(error){$('importError').textContent='Load rejected: '+error.message;}};
+$('file').onchange=async e=>{const file=e.target.files[0];if(!file)return;try{if(replaceProject(P.parse(await file.text()),true))$('loadDialog').close();}catch(error){$('importError').textContent='Load rejected: '+error.message;message('Load rejected: '+error.message);}e.target.value='';};
+$('projectName').onchange=e=>action(()=>{project.name=e.target.value;});
+$('undo').onclick=()=>{if(!undo.length)return;redo.push(snapshot());project=JSON.parse(undo.pop());reconcile();recoverWrite();render();};
+$('redo').onclick=()=>{if(!redo.length)return;undo.push(snapshot());project=JSON.parse(redo.pop());reconcile();recoverWrite();render();};
+for(const [id,dx,dy] of [['panLeft',-1,0],['panRight',1,0],['panUp',0,1],['panDown',0,-1]])$(id).onclick=()=>{const next=[center[0]+dx,center[1]+dy];if(next.every(Number.isSafeInteger)){center=next;renderWorld();}};
+$('origin').onclick=()=>{selected=[0,0];center=[0,0];selectedCell=null;reconcile();render();};
+$('goCoord').onclick=()=>{try{selected=coordInputs();center=[...selected];selectedCell=null;reconcile();render();}catch(e){message(e.message);}};
+$('createRoom').onclick=()=>createRoom();$('createEmpty').onclick=()=>createRoom();
+$('duplicateRoom').onclick=()=>action(()=>{
+  const coord=coordInputs(),r=room();if(project.rooms.some(r=>P.key(r.coord)===P.key(coord)))throw new Error('Enter unused target coordinates above, then click Duplicate here.');
+  const copy=P.clone(r);copy.coord=coord;copy.id=P.roomId(coord);project.rooms.push(copy);selected=coord;center=[...coord];
+});
+$('deleteRoom').onclick=()=>{
+  if(project.rooms.length<2)return;if(!window.confirm(`Delete room (${selected.join(', ')}) and its contents?`))return;
+  action(()=>{const r=room();project.rooms=project.rooms.filter(other=>other!==r);if(startHere(r)){const next=project.rooms[0];project.start={room:[...next.coord],x:next.spawn[0],y:next.spawn[1]};message('World start moved to the first remaining room spawn.');}selected=[...project.rooms[0].coord];center=[...selected];});
+};
+$('newProject').onclick=()=>{const r=P.newRoom([0,0]);replaceProject({formatVersion:1,name:'Untitled world',start:{room:[0,0],x:1,y:1},rooms:[r]});};
+$('demo').onclick=()=>replaceProject(P.clone(DEMO));
+$('recover').onclick=()=>{try{const text=localStorage.getItem(STORAGE);if(text)replaceProject(P.parse(text));else message('No browser recovery found.');}catch(e){message('Recovery failed: '+e.message);}};
+$('exportTop').onclick=()=>{if(!room())selected=[...project.start.room];tab='Export';render();};
+window.addEventListener('beforeunload',e=>{if(dirty()){e.preventDefault();e.returnValue='';}});
+window.addEventListener('keydown',e=>{
+  if(e.target.matches('input,textarea,select'))return;
+  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();$(e.shiftKey?'redo':'undo').click();}
+  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='s'){e.preventDefault();$('save').click();}
+});
+for(let row=0;row<8;row++)$('yAxis').append(el('span',{text:P.localY(row)}));
+for(let x=0;x<8;x++)$('xAxis').append(el('span',{text:x}));
+reconcile();render();
+</script>
+</body></html>

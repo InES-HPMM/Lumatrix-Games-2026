@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="de">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Lumatrix Wetter</title>
+    <meta name="description" content="Standort wählen und Wettervorhersage auf die Lumatrix übertragen">
+    <meta name="theme-color" content="#14161c">
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="icon" href="icons/icon-192.png">
+    <link rel="stylesheet" href="stil.css">
+    <script type="module" src="app.js"></script>
+</head>
+<body>
+<main>
+    <header>
+        <h1>Lumatrix Wetter</h1>
+        <p class="unter">Diese Seite holt das Wetter bei Open-Meteo und überträgt es per USB auf die Lumatrix.
+            Solange sie offen ist, aktualisiert sie stündlich.</p>
+    </header>
+
+    <p id="ohne-serial" class="warnung" hidden>
+        Dieser Browser kann nicht mit der Lumatrix sprechen (Web Serial fehlt).
+        Bitte Chrome, Edge oder einen anderen Chromium-Browser auf dem Desktop verwenden.
+    </p>
+
+    <section>
+        <h2>Lumatrix</h2>
+        <dl>
+            <dt>Verbindung</dt>
+            <dd><span id="verbindung" class="zustand" data-zustand="aus">nicht verbunden</span></dd>
+            <dt>Standort</dt>
+            <dd id="standort">–</dd>
+            <dt>Letzte Übertragung</dt>
+            <dd id="letzte">–</dd>
+            <dt>Nächste Übertragung</dt>
+            <dd id="naechste">–</dd>
+        </dl>
+        <div class="knoepfe">
+            <button id="verbinden" class="haupt" type="button">Mit Lumatrix verbinden</button>
+            <button id="aktualisieren" type="button" disabled>Jetzt aktualisieren</button>
+            <button id="trennen" type="button" hidden>Trennen</button>
+        </div>
+    </section>
+
+    <section>
+        <h2>Standort</h2>
+        <form id="suche" class="zeile">
+            <input id="suche-feld" type="search" placeholder="Ort suchen, z. B. Stans" autocomplete="off" disabled>
+            <button id="suche-knopf" type="submit" disabled>Suchen</button>
+        </form>
+        <ul id="treffer" class="treffer"></ul>
+        <button id="mein-standort" type="button" disabled>Mein Standort verwenden</button>
+    </section>
+
+    <section>
+        <h2>Nachtruhe</h2>
+        <p class="unter">In dieser Zeit bleibt die Matrix dunkel. Ein Klick am Joystick weckt sie für 30 Sekunden.</p>
+        <form id="nachtruhe" class="zeile">
+            <label>von <input id="nacht-beginn" type="time" value="22:00" disabled></label>
+            <label>bis <input id="nacht-ende" type="time" value="07:00" disabled></label>
+            <button id="nacht-speichern" type="submit" disabled>Speichern</button>
+        </form>
+    </section>
+
+    <section>
+        <h2>Meldungen</h2>
+        <ul id="meldungen" class="meldungen"></ul>
+    </section>
+</main>
+</body>
+</html>

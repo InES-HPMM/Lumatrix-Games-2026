@@ -1,0 +1,9 @@
+{
+  "from": "Wädenswil, Bahnhof",
+  "to": "Zürich HB",
+  "walk_minutes": 3,
+  "reserve_minutes": 1,
+  "direct_only": false,
+  "update_seconds": 30,
+  "serial_port": ""
+}
